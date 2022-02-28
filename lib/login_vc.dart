@@ -1,4 +1,8 @@
+import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
+import 'TabsScreen/homescreen.dart';
 
 class LoginVc extends StatefulWidget {
   const LoginVc({Key? key}) : super(key: key);
@@ -27,12 +31,17 @@ class _LoginVcState extends State<LoginVc> {
       return;
     }
 
+    if (!EmailValidator.validate(email)){
+      showAlert('The email address does not appear to be valid. Make sure you enter a valid email address.', context);
+      return;
+    }
     if (pasword.isEmpty) {
       showAlert('Please enter your password', context);
       return;
     }
 
-    
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
+
   }
 
   void showAlert(String msg, BuildContext context) {
