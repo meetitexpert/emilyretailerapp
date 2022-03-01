@@ -40,7 +40,8 @@ class _LoginVcState extends State<LoginVc> {
       return;
     }
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
+    Navigator.pushReplacementNamed(context, '/tabVc');
 
   }
 
@@ -48,12 +49,11 @@ class _LoginVcState extends State<LoginVc> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(''),
         content: Text(msg),
         actions: [
-          TextButton(
-              onPressed: (() => {Navigator.of(context).pop()}),
-              child: const Text('OK')),
+          ElevatedButton(
+            onPressed: (() => {Navigator.of(context).pop()}), 
+            child: const Text('OK')),
         ],
       ),
     );

@@ -14,7 +14,8 @@ class IntroVC extends StatelessWidget {
 
   void loginWithEmail(BuildContext context) {
     debugPrint('EMILY');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginVc()));
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginVc()));
+    Navigator.pushNamed(context, '/loginVc');
   }
 
   void loginWithTouchId(BuildContext context) {
@@ -33,9 +34,12 @@ class IntroVC extends StatelessWidget {
   }
 
   Widget buttonsHandling(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.only(top: 150),
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.only(bottom:100),
+       
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               decoration: const BoxDecoration(color: Colors.blue),
@@ -47,7 +51,7 @@ class IntroVC extends StatelessWidget {
                     style: fontStyleSettings(16, FontWeight.w500),),
               ),
             ),
-
+        
             const SizedBox(
               height: 10,
             ),
@@ -63,7 +67,9 @@ class IntroVC extends StatelessWidget {
               ),
             ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 
   @override
@@ -75,7 +81,9 @@ class IntroVC extends StatelessWidget {
           image: DecorationImage(
               image: AssetImage('images/emily-retailer.png'), fit: BoxFit.fill),
         ),
-        child: ListView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             //logo contatiner
             textUnderLogo(),

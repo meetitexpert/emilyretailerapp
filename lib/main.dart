@@ -1,3 +1,5 @@
+import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
+import 'package:emilyretailerapp/login_vc.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/Intro_vc.dart';
 
@@ -26,6 +28,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Roboto',
       ),
+      routes: <String, WidgetBuilder>{
+        '/loginVc':(context) => const LoginVc(),
+        '/tabVc':(context) => const TabsController(),
+      },
       home: const IntroVC(),
     );
   }
