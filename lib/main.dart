@@ -1,14 +1,21 @@
+import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
 import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
+import 'package:emilyretailerapp/Utils/Constants.dart';
 import 'package:emilyretailerapp/login_vc.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/Intro_vc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  Constants.prefs = await SharedPreferences.getInstance();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -32,8 +39,9 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/loginVc':(context) => const LoginVc(),
         '/tabVc':(context) => const TabsController(),
+        '/tabbarVc':(context) => tabbartController(),
       },
-      home: const IntroVC(),
+      home: (Constants.prefs?.getBool("isUserLogedIn") == true) ? tabbartController() : const IntroVC(),
     );
   }
 }

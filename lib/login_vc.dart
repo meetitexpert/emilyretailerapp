@@ -1,3 +1,4 @@
+import 'package:emilyretailerapp/Utils/Constants.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:email_validator/email_validator.dart';
@@ -58,10 +59,12 @@ class _LoginVcState extends State<LoginVc> {
       showAlert('Please enter your password', context);
       return;
     }
-    showhideProgressHud(true);
 
+    Constants.prefs?.setBool("isUserLogedIn", true);
+    debugPrint(Constants.prefs?.getBool("isUserLogedIn").toString());
     // Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
     Navigator.pushReplacementNamed(context, '/tabVc');
+    
   }
 
   Future getTrackingID() async {
