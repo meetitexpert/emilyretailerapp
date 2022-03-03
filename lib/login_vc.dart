@@ -1,8 +1,10 @@
-import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:email_validator/email_validator.dart';
-import 'TabsScreen/homescreen.dart';
+import 'package:dio/dio.dart';
+import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
+import 'package:emilyretailerapp/Model/user_root.dart';
+import 'package:emilyretailerapp/Model/user.dart';
 
 class LoginVc extends StatefulWidget {
   const LoginVc({Key? key}) : super(key: key);
@@ -13,10 +15,25 @@ class LoginVc extends StatefulWidget {
 }
 
 class _LoginVcState extends State<LoginVc> {
-  _LoginVcState({required this.email, required this.pasword});
+  _LoginVcState({
+    required this.email,
+    required this.pasword,
+  });
 
   String email;
   String pasword;
+
+  bool _visible = false;
+
+  late userRoot userroot;
+  late User user;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getTrackingID();
+  }
 
   TextStyle fontStyleSettings(double size) {
     return TextStyle(
@@ -31,18 +48,56 @@ class _LoginVcState extends State<LoginVc> {
       return;
     }
 
-    if (!EmailValidator.validate(email)){
-      showAlert('The email address does not appear to be valid. Make sure you enter a valid email address.', context);
+    if (!EmailValidator.validate(email)) {
+      showAlert(
+          'The email address does not appear to be valid. Make sure you enter a valid email address.',
+          context);
       return;
     }
     if (pasword.isEmpty) {
       showAlert('Please enter your password', context);
       return;
     }
+    showhideProgressHud(true);
 
     // Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
     Navigator.pushReplacementNamed(context, '/tabVc');
+  }
 
+  Future getTrackingID() async {
+    Response response;
+    HttpService http = HttpService();
+    //String params = "device_type=iPhone&app_version=1&device_pin=123&device_os=iOS&access_token=09b16acba64e1929875605b3c657404e&device_os_version=1&device_model=234&device_make=Apple";
+    Map<String, dynamic> params = {
+      "device_type": "iPhone",
+      "app_version": "1",
+      "device_pin": "123",
+      "device_os": "iOS",
+      "access_token": "09b16acba64e1929875605b3c657404e",
+      "device_os_version": "1",
+      "device_model": "234",
+      "device_make": "Apple"
+    };
+
+    try {
+      response = await http.postRequest('Resource/GetTrackingId', params);
+      if (response.statusCode == 200) {
+        // userroot = userRoot.fromJson(response.data);
+        // user = userroot.user;
+        
+      } else {
+        debugPrint('some thing went wrong');
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+
+  }
+
+  void showhideProgressHud(bool isallow) {
+    setState(() {
+      _visible = isallow;
+    });
   }
 
   void showAlert(String msg, BuildContext context) {
@@ -52,8 +107,8 @@ class _LoginVcState extends State<LoginVc> {
         content: Text(msg),
         actions: [
           ElevatedButton(
-            onPressed: (() => {Navigator.of(context).pop()}), 
-            child: const Text('OK')),
+              onPressed: (() => {Navigator.of(context).pop()}),
+              child: const Text('OK')),
         ],
       ),
     );
@@ -93,12 +148,11 @@ class _LoginVcState extends State<LoginVc> {
                   onChanged: (value) {
                     email = value;
                   },
-                  
                   decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Enter your email',
                       contentPadding: EdgeInsets.only(bottom: 15.0)),
-                      keyboardType: TextInputType.emailAddress,
+                  keyboardType: TextInputType.emailAddress,
                 ),
               ),
             ),
@@ -156,6 +210,17 @@ class _LoginVcState extends State<LoginVc> {
     );
   }
 
+  Widget progressHud() {
+    return Visibility(
+        maintainSize: true,
+        maintainAnimation: true,
+        maintainState: true,
+        visible: _visible,
+        child: Container(
+            margin: EdgeInsets.only(top: 50, bottom: 30),
+            child: CircularProgressIndicator()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,30 +235,35 @@ class _LoginVcState extends State<LoginVc> {
       body: Container(
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(color: Colors.white),
-        child: ListView(
-          children: <Widget>[
-            const SizedBox(
-              height: 200,
-            ),
-            emailTextInputField(),
-            const SizedBox(
-              height: 15,
-            ),
-            pwdTextInputField(),
-            const SizedBox(
-              height: 25,
-            ),
-            MaterialButton(
-              onPressed: () => login(context),
-              color: Colors.blue,
-              height: 40,
-              child: const Text(
-                'Sign in to my account',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
+        child: Stack(
+          children: [
+            Center(child: progressHud()),
+            ListView(
+              children: <Widget>[
+                const SizedBox(
+                  height: 200,
                 ),
-              ),
+                emailTextInputField(),
+                const SizedBox(
+                  height: 15,
+                ),
+                pwdTextInputField(),
+                const SizedBox(
+                  height: 25,
+                ),
+                MaterialButton(
+                  onPressed: () => login(context),
+                  color: Colors.blue,
+                  height: 40,
+                  child: const Text(
+                    'Sign in to my account',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                )
+              ],
             )
           ],
         ),
