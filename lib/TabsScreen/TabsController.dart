@@ -35,19 +35,13 @@ class _TabsControllerState extends State<TabsController>
               indicatorPadding: EdgeInsets.all(5.0),
               indicatorColor: Color(0xFFE8E8E8),
               controller: _controller,
-              tabs: const  <Widget>[
-                Tab(
-                  text: 'Home',
-                  icon: Icon(Icons.home),
-                ),
-                Tab(
-                  text: 'Payouts',
-                  icon: Icon(Icons.payment_outlined),
-                ),
-                Tab(
-                  text: 'More',
+              tabs: <Widget>[
+                _individualTab(const Icon(Icons.home), "home"),
+                _individualTab(const Icon(Icons.payment_outlined), "Payouts"),
+                const Tab(
                   icon: Icon(Icons.more_horiz),
-                ),
+                  text: "More",
+                )
               ]),
         ),
         body: TabBarView(controller: _controller, children: const <Widget>[
@@ -55,6 +49,22 @@ class _TabsControllerState extends State<TabsController>
           PayoutsScreen(),
           MoreScreen(),
         ]),
+      ),
+    );
+  }
+
+  Widget _individualTab(Icon icon, String title) {
+    return Container(
+      // height: 50 + MediaQuery.of(context).padding.bottom,
+      padding: const EdgeInsets.only(right: 20),
+      width: double.infinity,
+      decoration: const BoxDecoration(
+          border: Border(
+              right: BorderSide(
+                  color: Colors.white, width: 1, style: BorderStyle.solid))),
+      child: Tab(
+        icon: icon,
+        text: title,
       ),
     );
   }
