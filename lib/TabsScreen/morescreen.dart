@@ -12,10 +12,21 @@ class _MoreScreenState extends State<MoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('More'),
+        title: const Text('More'),
         automaticallyImplyLeading: false,
       ),
-      body: Center(child: const Text('More screen')),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text('More screen'),
+          ElevatedButton(
+            onPressed: (){
+              Navigator.pushReplacementNamed(context, '/loginVc');
+            }, 
+            child: Text('Sing out')),
+        ],
+      ),
     );
   }
 }

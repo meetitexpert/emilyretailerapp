@@ -63,7 +63,7 @@ class _LoginVcState extends State<LoginVc> {
     Constants.prefs?.setBool("isUserLogedIn", true);
     debugPrint(Constants.prefs?.getBool("isUserLogedIn").toString());
     // Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
-    Navigator.pushReplacementNamed(context, '/tabVc');
+    Navigator.pushReplacementNamed(context, '/tabbarVc');
     
   }
 

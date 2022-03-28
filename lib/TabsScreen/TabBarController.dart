@@ -21,8 +21,8 @@ class _tabbart_Controller_State extends State<tabbartController> {
         tabBar: CupertinoTabBar(
           backgroundColor: Color(0xFFE8E8E8),
           inactiveColor: Color(0xFFA9A9A9),
-          height: 60,
-          iconSize: 40,
+          height: 50,
+          iconSize: 30,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
