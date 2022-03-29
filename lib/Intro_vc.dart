@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/login_vc.dart';
 
+import 'Utils/PixelTools.dart';
+
 class IntroVC extends StatelessWidget {
   const IntroVC({Key? key}) : super(key: key);
 
   TextStyle fontStyleSettings(double size, FontWeight weight) {
     return TextStyle(
-      color: Colors.white, 
-      fontSize: size, 
+      color: Colors.white,
+      fontSize: size,
       fontWeight: weight,
-      );
+    );
   }
 
   void loginWithEmail(BuildContext context) {
@@ -36,8 +38,7 @@ class IntroVC extends StatelessWidget {
   Widget buttonsHandling(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.only(bottom:100),
-       
+        padding: const EdgeInsets.only(bottom: 100),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -47,23 +48,25 @@ class IntroVC extends StatelessWidget {
               height: 40,
               child: TextButton(
                 onPressed: (() => loginWithTouchId(context)),
-                child: Text('User Touch ID',
-                    style: fontStyleSettings(16, FontWeight.w500),),
+                child: Text(
+                  'User Touch ID',
+                  style: fontStyleSettings(16, FontWeight.w500),
+                ),
               ),
             ),
-        
             const SizedBox(
               height: 10,
             ),
-            
             Container(
               decoration: const BoxDecoration(color: Colors.blue),
               width: 280,
               height: 40,
               child: TextButton(
                 onPressed: (() => loginWithEmail(context)),
-                child: Text('Sign in with EMILY',
-                    style: fontStyleSettings(16, FontWeight.w500),),
+                child: Text(
+                  'Sign in with EMILY',
+                  style: fontStyleSettings(16, FontWeight.w500),
+                ),
               ),
             ),
           ],
@@ -74,6 +77,8 @@ class IntroVC extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PixelTools.init(
+        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return Scaffold(
       body: Container(
         constraints: const BoxConstraints.expand(),

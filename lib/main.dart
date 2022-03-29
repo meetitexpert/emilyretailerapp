@@ -1,15 +1,26 @@
 import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
 import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
+import 'package:emilyretailerapp/Utils/AppTools.dart';
+import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/Constants.dart';
+import 'package:emilyretailerapp/Utils/DeviceTools.dart';
 import 'package:emilyretailerapp/login_vc.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/Intro_vc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   Constants.prefs = await SharedPreferences.getInstance();
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
+    SystemUiOverlay.bottom, //This line is used for showing the bottom bar
+  ]);
+
+  DeviceTools.init();
+  AppTools.init();
 
   runApp(MyApp());
 }
@@ -37,13 +48,13 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       routes: <String, WidgetBuilder>{
-        '/loginVc':(context) => const LoginVc(),
-        '/tabVc':(context) => const TabsController(),
-        '/tabbarVc':(context) => tabbartController(),
+        '/loginVc': (context) => const LoginVc(),
+        '/tabVc': (context) => const TabsController(),
+        '/tabbarVc': (context) => tabbartController(),
       },
-      home: (Constants.prefs?.getBool("isUserLogedIn") == true) ? tabbartController() : const IntroVC(),
+      home: (Constants.prefs?.getBool(ConstTools.spUserAuthorization) == true)
+          ? tabbartController()
+          : const IntroVC(),
     );
   }
 }
-
-

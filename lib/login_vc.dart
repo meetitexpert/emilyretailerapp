@@ -1,11 +1,17 @@
+import 'dart:convert';
+
+import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/Utils/AppTools.dart';
+import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/Constants.dart';
+import 'package:emilyretailerapp/Utils/DeviceTools.dart';
+import 'package:emilyretailerapp/Utils/DialogTools.dart';
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:email_validator/email_validator.dart';
 import 'package:dio/dio.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
-import 'package:emilyretailerapp/Model/user_root.dart';
-import 'package:emilyretailerapp/Model/user.dart';
+import 'package:crypto/crypto.dart';
 
 class LoginVc extends StatefulWidget {
   const LoginVc({Key? key}) : super(key: key);
@@ -25,9 +31,6 @@ class _LoginVcState extends State<LoginVc> {
   String pasword;
 
   bool _visible = false;
-
-  late userRoot userroot;
-  late User user;
 
   @override
   void initState() {
@@ -60,11 +63,46 @@ class _LoginVcState extends State<LoginVc> {
       return;
     }
 
-    Constants.prefs?.setBool("isUserLogedIn", true);
-    debugPrint(Constants.prefs?.getBool("isUserLogedIn").toString());
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const TabsController(),));
-    Navigator.pushReplacementNamed(context, '/tabbarVc');
-    
+    loginWithEmail(email, pasword);
+  }
+
+  Future loginWithEmail(String email, String pwd) async {
+    Response response;
+    HttpService http = HttpService();
+
+    String md5Password = md5.convert(utf8.encode(pwd)).toString();
+    showhideProgressHud(true);
+    Map<String, dynamic> params = {
+      "user_name": email,
+      "password": md5Password,
+      "role": "21"
+    };
+
+    try {
+      response = await http.postRequest(
+          ConstTools.path + ConstTools.apiUserLogin, params, context);
+      if (response.statusCode == 200) {
+        debugPrint("$response");
+        showhideProgressHud(false);
+        if (response.data["status"] == "0") {
+          LoginEntity loginUser = LoginEntity.fromJson(response.data);
+
+          Constants.prefs?.setBool(ConstTools.spUserAuthorization, true);
+          String user = jsonEncode(loginUser);
+          //save the user data into sharedPreferences using key-value pairs
+          Constants.prefs?.setString(ConstTools.spUser, user);
+
+          Navigator.pushReplacementNamed(context, '/tabbarVc');
+        } else if (response.data["status"] == "10247") {
+          String desc = response.data["details"]["description"];
+          DialogTools.alertDialg("Ok", "", desc, context);
+        }
+      } else {
+        debugPrint('some thing went wrong');
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   Future getTrackingID() async {
@@ -72,29 +110,30 @@ class _LoginVcState extends State<LoginVc> {
     HttpService http = HttpService();
     //String params = "device_type=iPhone&app_version=1&device_pin=123&device_os=iOS&access_token=09b16acba64e1929875605b3c657404e&device_os_version=1&device_model=234&device_make=Apple";
     Map<String, dynamic> params = {
-      "device_type": "iPhone",
-      "app_version": "1",
-      "device_pin": "123",
-      "device_os": "iOS",
-      "access_token": "09b16acba64e1929875605b3c657404e",
-      "device_os_version": "1",
-      "device_model": "234",
-      "device_make": "Apple"
+      "device_type": DeviceTools.deviceModel,
+      "app_version": AppTools.appVersion,
+      "device_pin": DeviceTools.devicePin,
+      "device_os": DeviceTools.deviceMake,
+      "device_os_version": DeviceTools.osVersion,
+      "device_model": DeviceTools.deviceModel,
+      "device_make": DeviceTools.deviceMake
     };
 
     try {
-      response = await http.postRequest('Resource/GetTrackingId', params);
+      response = await http.postRequest(
+          ConstTools.path + ConstTools.apiGetTrackingId, params, context);
       if (response.statusCode == 200) {
-        // userroot = userRoot.fromJson(response.data);
-        // user = userroot.user;
-        
+        debugPrint("$response");
+        if (response.data["status"] == "0") {
+          Constants.prefs
+              ?.setString(ConstTools.spTrackingId, response.data["trackingId"]);
+        }
       } else {
         debugPrint('some thing went wrong');
       }
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
-
   }
 
   void showhideProgressHud(bool isallow) {
