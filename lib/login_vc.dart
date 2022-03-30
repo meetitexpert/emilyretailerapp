@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/Constants.dart';
@@ -92,7 +93,8 @@ class _LoginVcState extends State<LoginVc> {
           //save the user data into sharedPreferences using key-value pairs
           Constants.prefs?.setString(ConstTools.spUser, user);
 
-          Navigator.pushReplacementNamed(context, '/tabbarVc');
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => tabbartController()));
         } else if (response.data["status"] == "10247") {
           String desc = response.data["details"]["description"];
           DialogTools.alertDialg("Ok", "", desc, context);

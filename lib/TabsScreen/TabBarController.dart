@@ -28,36 +28,37 @@ class _tabbart_Controller_State extends State<tabbartController> {
     PixelTools.init(
         MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return CupertinoTabScaffold(
-        tabBar: CupertinoTabBar(
-          backgroundColor: const Color(ColorTools.navigationBarColor),
-          inactiveColor: Color(0xFFA9A9A9),
-          height: 60,
-          iconSize: 35,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.money_dollar),
-              label: 'Payouts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.qrcode),
-              label: 'Scan',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.more_horiz),
-              label: 'More',
-            )
-          ],
-        ),
-        tabBuilder: (context, index) {
-          return CupertinoTabView(
-            builder: (BuildContext context) {
-              return data[index];
-            },
-          );
-        });
+      tabBar: CupertinoTabBar(
+        backgroundColor: const Color(ColorTools.navigationBarColor),
+        inactiveColor: Color(0xFFA9A9A9),
+        height: 60,
+        iconSize: 35,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.money_dollar),
+            label: 'Payouts',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.qrcode),
+            label: 'Scan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.more_horiz),
+            label: 'More',
+          )
+        ],
+      ),
+      tabBuilder: (context, index) {
+        return CupertinoTabView(
+          builder: (BuildContext context) {
+            return data[index];
+          },
+        );
+      },
+    );
   }
 }

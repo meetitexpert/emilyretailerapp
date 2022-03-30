@@ -16,8 +16,9 @@ class IntroVC extends StatelessWidget {
 
   void loginWithEmail(BuildContext context) {
     debugPrint('EMILY');
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginVc()));
-    Navigator.pushNamed(context, '/loginVc');
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const LoginVc()));
+    // Navigator.pushNamed(context, '/loginVc');
   }
 
   void loginWithTouchId(BuildContext context) {

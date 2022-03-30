@@ -48,8 +48,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       routes: <String, WidgetBuilder>{
-        '/loginVc': (context) => const LoginVc(),
-        '/tabVc': (context) => const TabsController(),
+        '/loginVc': (context) => const IntroVC(),
         '/tabbarVc': (context) => tabbartController(),
       },
       home: (Constants.prefs?.getBool(ConstTools.spUserAuthorization) == true)
