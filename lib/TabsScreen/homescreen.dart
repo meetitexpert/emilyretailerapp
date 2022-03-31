@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:cupertino_table_view/cupertino_table_view.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class homeScreen extends StatefulWidget {
   const homeScreen({Key? key}) : super(key: key);
@@ -16,7 +17,10 @@ class homeScreen extends StatefulWidget {
 // ignore: camel_case_types
 class _homeScreenState extends State<homeScreen>
     with AutomaticKeepAliveClientMixin<homeScreen> {
-  final PageController controller = PageController();
+  final controller = PageController(
+    viewportFraction: 0.8,
+    keepPage: true,
+  );
   List<String> promotionslist = [
     "https://as2.ftcdn.net/v2/jpg/02/62/03/53/1000_F_262035364_gGi8uJsPl9uljis8C6oxI0w6AM7MKDLq.jpg",
     "https://as1.ftcdn.net/v2/jpg/03/13/66/88/1000_F_313668868_PjtPd0e77e1BtfkxvWieCKeY6vedGQeW.jpg",
@@ -64,33 +68,35 @@ class _homeScreenState extends State<homeScreen>
   }
 
   Widget promotiontextWidget() {
-    return Container(
-        padding: const EdgeInsets.all(8),
-        color: const Color(0xFFE1E1E1),
-        child: const Text(
-            "Support your local businesses. Order & pick up at the store. Earn rewards points or cash back.",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontFamily: "Roboto-Bold",
-              decoration: TextDecoration.none,
-            )));
+    return Expanded(
+      child: Container(
+          padding: const EdgeInsets.all(8),
+          color: const Color(0xFFE1E1E1),
+          child: const Text(
+              "Support your local businesses. Order & pick up at the store. Earn rewards points or cash back.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: "Roboto-Bold",
+                decoration: TextDecoration.none,
+              ))),
+    );
   }
 
   Widget paginationWidget() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: PageIndicator(
-          activeSize: 14,
-          size: 14,
-          color: const Color(ColorTools.navigationBarColor),
-          activeColor: const Color(ColorTools.primaryColor),
-          count: promotionslist.length,
-          controller: PageController(initialPage: selectedIndex),
-        ),
-      ),
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: AnimatedSmoothIndicator(
+            activeIndex: selectedIndex,
+            count: promotionslist.length,
+            effect: const WormEffect(
+              paintStyle: PaintingStyle.stroke,
+              strokeWidth: 1,
+              activeDotColor: Color(ColorTools.primaryColor),
+            ),
+          )),
     );
   }
 
