@@ -27,12 +27,18 @@ class _homeScreenState extends State<homeScreen>
     "https://as2.ftcdn.net/v2/jpg/03/03/76/11/1000_F_303761193_e6FwzIXsujF73NTN120W0qosvrluPYgt.jpg"
   ];
 
+  List<String> promotionsText = [
+    "Support your local businesses. Order & pick up at the store. Earn rewards points",
+    "Support your local businesses. Order & pick up at the store. Earn rewards cash back.",
+    "Support your local businesses. Order & pick up at the store. Earn rewards stamp."
+  ];
+
   int selectedIndex = 0;
 
   @override
   bool get wantKeepAlive => true;
 
-  Widget swiperWidget() {
+  Widget swiperWidget(int section) {
     return Swiper(
       itemBuilder: (BuildContext context, int index) {
         return Image.network(
@@ -60,9 +66,11 @@ class _homeScreenState extends State<homeScreen>
         debugPrint('$index');
       },
       onIndexChanged: (index) {
-        setState(() {
-          selectedIndex = index;
-        });
+        if (section == 0) {
+          setState(() {
+            selectedIndex = index;
+          });
+        }
       },
     );
   }
@@ -72,10 +80,9 @@ class _homeScreenState extends State<homeScreen>
       child: Container(
           padding: const EdgeInsets.all(8),
           color: const Color(0xFFE1E1E1),
-          child: const Text(
-              "Support your local businesses. Order & pick up at the store. Earn rewards points or cash back.",
+          child: Text(promotionsText[selectedIndex],
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 14,
                 fontFamily: "Roboto-Bold",
@@ -100,14 +107,14 @@ class _homeScreenState extends State<homeScreen>
     );
   }
 
-  Widget promotionsWidget() {
+  Widget promotionsWidget(int section) {
     return Column(
       children: [
         Container(
             color: Colors.white,
             width: PixelTools.screenWidth,
             height: 200,
-            child: swiperWidget()),
+            child: swiperWidget(section)),
         promotiontextWidget(),
         paginationWidget()
       ],
@@ -118,7 +125,7 @@ class _homeScreenState extends State<homeScreen>
     return SizedBox(
       height: section == 0 ? 280 : 200,
       width: PixelTools.screenWidth,
-      child: section == 0 ? promotionsWidget() : swiperWidget(),
+      child: section == 0 ? promotionsWidget(section) : swiperWidget(section),
     );
   }
 
@@ -131,6 +138,7 @@ class _homeScreenState extends State<homeScreen>
           Container(
             padding: const EdgeInsets.all(5),
             child: RatingBar.builder(
+              glow: false,
               initialRating: 3,
               minRating: 1,
               direction: Axis.horizontal,
@@ -143,12 +151,18 @@ class _homeScreenState extends State<homeScreen>
               onRatingUpdate: (rating) {
                 debugPrint('$rating');
               },
+              updateOnDrag: false,
             ),
           ),
           const Center(
               child: Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: Text('Bilal Hussain'),
+          )),
+          const Center(
+              child: Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Text('Mar 24, 2022 at 12:23 PM'),
           )),
         ],
       ),

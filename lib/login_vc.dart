@@ -88,10 +88,10 @@ class _LoginVcState extends State<LoginVc> {
         if (response.data["status"] == "0") {
           LoginEntity loginUser = LoginEntity.fromJson(response.data);
 
-          Constants.prefs?.setBool(ConstTools.spUserAuthorization, true);
+          ConstTools.prefs?.setBool(ConstTools.spUserAuthorization, true);
           String user = jsonEncode(loginUser);
           //save the user data into sharedPreferences using key-value pairs
-          Constants.prefs?.setString(ConstTools.spUser, user);
+          ConstTools.prefs?.setString(ConstTools.spUser, user);
 
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => tabbartController()));
@@ -127,7 +127,7 @@ class _LoginVcState extends State<LoginVc> {
       if (response.statusCode == 200) {
         debugPrint("$response");
         if (response.data["status"] == "0") {
-          Constants.prefs
+          ConstTools.prefs
               ?.setString(ConstTools.spTrackingId, response.data["trackingId"]);
         }
       } else {

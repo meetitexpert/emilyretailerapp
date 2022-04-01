@@ -1,25 +1,25 @@
 import 'dart:convert';
 
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
-import 'package:emilyretailerapp/Utils/Constants.dart';
 import 'package:flutter/material.dart';
-import '../EmilyNewtworkService/Entity.dart';
-import '../Utils/DialogTools.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 
-enum HttpErrorType {
-  httpTimeout,
-
-  httpException,
-
-  unknowmHost,
-
-  parserException,
-
-  noConnections,
-}
+import 'ColorTools.dart';
 
 class ConstTools {
+  static SharedPreferences? prefs;
+  static bool showingHud = false;
+
+  Widget getScaffold(Widget items) {
+    return Scaffold(
+        body: ProgressHUD(
+            backgroundColor: const Color(ColorTools.primaryColor),
+            backgroundRadius: const Radius.circular(8),
+            padding: const EdgeInsets.all(24),
+            child: Builder(builder: (context) => items)));
+  }
+
 ////////////////////////////////////////////////////////////////////////////////
   static const String hostURL =
       "https://services.emilyrewards.com/RLP-Service/";
@@ -57,12 +57,30 @@ class ConstTools {
   static const String spOfferId = "SP_OFFER_ID";
 
   LoginEntity retreiveSavedUserDetail() {
-    String decodedUser = Constants.prefs?.getString(ConstTools.spUser)! ?? "";
+    String decodedUser = ConstTools.prefs?.getString(ConstTools.spUser)! ?? "";
     // Read the data, decode it and store it in map structure
     Map<String, dynamic> jsondatais = jsonDecode(decodedUser);
     //convert it into User object
     var user = LoginEntity.fromJson(jsondatais);
 
     return user;
+  }
+
+  showHud(BuildContext context, {String message = "Loading..."}) {
+    if (!showingHud) {
+      final progress = ProgressHUD.of(context);
+      progress?.showWithText(message);
+      showingHud = true;
+    }
+  }
+
+  dismissHud(
+    BuildContext context,
+  ) {
+    if (showingHud) {
+      final progress = ProgressHUD.of(context);
+      progress?.dismiss();
+      showingHud = false;
+    }
   }
 }

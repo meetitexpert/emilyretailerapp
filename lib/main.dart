@@ -1,10 +1,7 @@
 import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
-import 'package:emilyretailerapp/TabsScreen/TabsController.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
-import 'package:emilyretailerapp/Utils/Constants.dart';
 import 'package:emilyretailerapp/Utils/DeviceTools.dart';
-import 'package:emilyretailerapp/login_vc.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/Intro_vc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +10,7 @@ import 'package:flutter/services.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Constants.prefs = await SharedPreferences.getInstance();
+  ConstTools.prefs = await SharedPreferences.getInstance();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
     SystemUiOverlay.bottom, //This line is used for showing the bottom bar
@@ -51,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/loginVc': (context) => const IntroVC(),
         '/tabbarVc': (context) => tabbartController(),
       },
-      home: (Constants.prefs?.getBool(ConstTools.spUserAuthorization) == true)
+      home: (ConstTools.prefs?.getBool(ConstTools.spUserAuthorization) == true)
           ? tabbartController()
           : const IntroVC(),
     );

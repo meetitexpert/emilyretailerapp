@@ -1,9 +1,6 @@
-import 'package:emilyretailerapp/login_vc.dart';
 import 'package:flutter/material.dart';
-
 import '../Intro_vc.dart';
 import '../Utils/ConstTools.dart';
-import '../Utils/Constants.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({Key? key}) : super(key: key);
@@ -30,9 +27,9 @@ class _MoreScreenState extends State<MoreScreen> {
             ElevatedButton(
                 onPressed: () {
                   // Navigator.pushReplacementNamed(context, '/loginVc');
-                  Constants.prefs
+                  ConstTools.prefs
                       ?.setBool(ConstTools.spUserAuthorization, false);
-                  Constants.prefs?.setString(ConstTools.spUser, "");
+                  ConstTools.prefs?.setString(ConstTools.spUser, "");
                   Navigator.of(context, rootNavigator: true).pushReplacement(
                       MaterialPageRoute(builder: (context) => const IntroVC()));
                 },
