@@ -1,5 +1,5 @@
 // ignore: file_names
-import 'package:emilyretailerapp/EmilyNewtworkService/Entity.dart';
+import 'package:emilyretailerapp/Model/Entity.dart';
 
 class LoginEntity extends Entity {
   late String userId;

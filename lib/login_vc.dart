@@ -4,7 +4,6 @@ import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
-import 'package:emilyretailerapp/Utils/Constants.dart';
 import 'package:emilyretailerapp/Utils/DeviceTools.dart';
 import 'package:emilyretailerapp/Utils/DialogTools.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,11 @@ class _LoginVcState extends State<LoginVc> {
   void initState() {
     super.initState();
 
-    getTrackingID();
+    //get tracking id if empty
+    final trackingID = ConstTools.prefs?.getString(ConstTools.spTrackingId);
+    if (trackingID!.isEmpty) {
+      getTrackingID();
+    }
   }
 
   TextStyle fontStyleSettings(double size) {

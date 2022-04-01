@@ -1,11 +1,20 @@
+import 'dart:async';
+
+import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/Model/RetailerRewardEntity.dart';
+import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
+import 'package:emilyretailerapp/Utils/DialogTools.dart';
 import 'package:emilyretailerapp/Utils/PixelTools.dart';
 import 'package:flutter/material.dart';
 import 'package:cupertino_table_view/cupertino_table_view.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../EmilyNewtworkService/NetworkSerivce.dart';
+import 'package:dio/dio.dart';
 
 class homeScreen extends StatefulWidget {
   const homeScreen({Key? key}) : super(key: key);
@@ -21,28 +30,86 @@ class _homeScreenState extends State<homeScreen>
     viewportFraction: 0.8,
     keepPage: true,
   );
-  List<String> promotionslist = [
-    "https://as2.ftcdn.net/v2/jpg/02/62/03/53/1000_F_262035364_gGi8uJsPl9uljis8C6oxI0w6AM7MKDLq.jpg",
-    "https://as1.ftcdn.net/v2/jpg/03/13/66/88/1000_F_313668868_PjtPd0e77e1BtfkxvWieCKeY6vedGQeW.jpg",
-    "https://as2.ftcdn.net/v2/jpg/03/03/76/11/1000_F_303761193_e6FwzIXsujF73NTN120W0qosvrluPYgt.jpg"
-  ];
 
-  List<String> promotionsText = [
-    "Support your local businesses. Order & pick up at the store. Earn rewards points",
-    "Support your local businesses. Order & pick up at the store. Earn rewards cash back.",
-    "Support your local businesses. Order & pick up at the store. Earn rewards stamp."
-  ];
-
+  List<RetailerRewardEntity> promotionslist = [];
+  List<RetailerRewardEntity> rewardsList = [];
   int selectedIndex = 0;
 
   @override
   bool get wantKeepAlive => true;
 
+  @override
+  void initState() {
+    super.initState();
+
+    Timer.periodic(const Duration(milliseconds: 5), ((Timer t) {
+      loadHomePromotionsAndRewardData();
+      t.cancel();
+    }));
+  }
+
+  Future loadHomePromotionsAndRewardData() async {
+    Response response;
+    HttpService http = HttpService();
+
+    LoginEntity user = ConstTools().retreiveSavedUserDetail();
+
+    Map<String, dynamic> params = {
+      "retailerUserId": user.userId,
+      "version": "1",
+      "type": "B1",
+      "lang": "en",
+      "clientClass": AppTools.clientClass
+    };
+
+    try {
+      response = await http.postRequest(
+          ConstTools.pathV3 + ConstTools.apiGetHomeRewards, params, context);
+      if (response.statusCode == 200) {
+        debugPrint("$response");
+        final int statuscode = response.data["statusCode"];
+        if (statuscode == 0) {
+          List<dynamic> returnData = response.data["returnData"];
+          if (returnData.isNotEmpty) {
+            final List<RetailerRewardEntity> promotionsArray = [];
+            for (var i = 0; i < returnData.length; i++) {
+              RetailerRewardEntity promotion =
+                  RetailerRewardEntity.fromJson(returnData[i]);
+              promotionsArray.add(promotion);
+            }
+
+            promotionslist = promotionsArray
+                .where((element) => element.type == "2")
+                .toList();
+            rewardsList = promotionsArray
+                .where((element) => element.type == "1")
+                .toList();
+
+            setState(() {});
+          }
+        } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
+          DialogTools.alertMultiloginDialg(
+              ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+        } else if (statuscode ==
+            int.parse(ConstTools.multiDevicesErrorCodeTwo)) {
+          DialogTools.alertMultiloginDialg(
+              ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+        }
+      } else {
+        http.checkHttpError(context, HttpErrorType.other, response);
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   Widget swiperWidget(int section) {
     return Swiper(
       itemBuilder: (BuildContext context, int index) {
+        RetailerRewardEntity promotion =
+            section == 0 ? promotionslist[index] : rewardsList[index];
         return Image.network(
-          promotionslist[index],
+          promotion.appFrontImgURL,
           fit: BoxFit.fill,
           loadingBuilder: (BuildContext context, Widget child,
               ImageChunkEvent? loadingProgress) {
@@ -58,7 +125,7 @@ class _homeScreenState extends State<homeScreen>
           },
         );
       },
-      itemCount: 3,
+      itemCount: section == 0 ? promotionslist.length : rewardsList.length,
       itemHeight: 200,
       itemWidth: PixelTools.screenWidth,
       loop: false,
@@ -76,11 +143,12 @@ class _homeScreenState extends State<homeScreen>
   }
 
   Widget promotiontextWidget() {
+    RetailerRewardEntity promotion = promotionslist[selectedIndex];
     return Expanded(
       child: Container(
           padding: const EdgeInsets.all(8),
           color: const Color(0xFFE1E1E1),
-          child: Text(promotionsText[selectedIndex],
+          child: Text(promotion.rewardShortDescription,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Colors.black,
@@ -138,7 +206,7 @@ class _homeScreenState extends State<homeScreen>
           Container(
             padding: const EdgeInsets.all(5),
             child: RatingBar.builder(
-              glow: false,
+              ignoreGestures: true,
               initialRating: 3,
               minRating: 1,
               direction: Axis.horizontal,
@@ -151,7 +219,6 @@ class _homeScreenState extends State<homeScreen>
               onRatingUpdate: (rating) {
                 debugPrint('$rating');
               },
-              updateOnDrag: false,
             ),
           ),
           const Center(
@@ -210,14 +277,17 @@ class _homeScreenState extends State<homeScreen>
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('${ConstTools().retreiveSavedUserDetail()}');
-
     return Scaffold(
-      body: CupertinoTableView(
-        delegate: generateDelegate(),
-        backgroundColor: Colors.white,
-        padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
-      ),
-    );
+        body: promotionslist.isNotEmpty
+            ? CupertinoTableView(
+                delegate: generateDelegate(),
+                backgroundColor: Colors.white,
+                padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
+              )
+            : Center(
+                child: Container(
+                    margin: const EdgeInsets.only(top: 50, bottom: 30),
+                    child: const CircularProgressIndicator()),
+              ));
   }
 }

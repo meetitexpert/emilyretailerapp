@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 
+import '../Intro_vc.dart';
 import 'ColorTools.dart';
 
 class ConstTools {
@@ -20,6 +21,10 @@ class ConstTools {
             child: Builder(builder: (context) => items)));
   }
 
+/////////////////Multi devices login Error code.///////////////
+  static const String multiDevicesErrorCode = "10293";
+  static const String multiDevicesErrorCodeTwo = "120300";
+
 ////////////////////////////////////////////////////////////////////////////////
   static const String hostURL =
       "https://services.emilyrewards.com/RLP-Service/";
@@ -33,6 +38,7 @@ class ConstTools {
 
   static const String apiGetTrackingId = "GetTrackingId";
   static const String apiUserLogin = "RetailerUserLogin";
+  static const String apiGetHomeRewards = "getHomeReward.mvc";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 
@@ -55,6 +61,23 @@ class ConstTools {
   static const String spStoreLocationId = "SP_STORE_LOCATION_ID";
 
   static const String spOfferId = "SP_OFFER_ID";
+
+  ///////////////// Alert Dialog Messages///////////////////////
+
+  static const String multiLoginMessage =
+      "Your account is signed in on multiple devices. Please sign in again. \n Error Code: 10293";
+
+  ////////////////////////////Buttons Labels//////////////////////////////////
+  static const String buttonOk = "Ok";
+
+  ///////////////// SignOut handling /////////////
+  static signOutHandling(BuildContext context) {
+    ConstTools.prefs?.setBool(ConstTools.spUserAuthorization, false);
+    ConstTools.prefs?.setString(ConstTools.spUser, "");
+    ConstTools.prefs?.setString(ConstTools.spTrackingId, "");
+    Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(builder: (context) => const IntroVC()));
+  }
 
   LoginEntity retreiveSavedUserDetail() {
     String decodedUser = ConstTools.prefs?.getString(ConstTools.spUser)! ?? "";

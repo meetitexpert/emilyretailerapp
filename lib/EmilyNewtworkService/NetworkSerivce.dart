@@ -108,7 +108,7 @@ class HttpService {
 
     String? tracnkingId = ConstTools.prefs?.getString(ConstTools.spTrackingId);
     if (tracnkingId != null && !api.contains(ConstTools.apiGetTrackingId)) {
-      parameters["tracking_id"] = tracnkingId;
+      parameters["trackingId"] = tracnkingId;
     }
 
     return parameters;

@@ -26,12 +26,7 @@ class _MoreScreenState extends State<MoreScreen> {
             Text('More screen'),
             ElevatedButton(
                 onPressed: () {
-                  // Navigator.pushReplacementNamed(context, '/loginVc');
-                  ConstTools.prefs
-                      ?.setBool(ConstTools.spUserAuthorization, false);
-                  ConstTools.prefs?.setString(ConstTools.spUser, "");
-                  Navigator.of(context, rootNavigator: true).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const IntroVC()));
+                  ConstTools.signOutHandling(context);
                 },
                 child: const Text('Sing out')),
           ],

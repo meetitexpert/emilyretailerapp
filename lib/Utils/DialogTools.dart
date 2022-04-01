@@ -1,66 +1,75 @@
 import 'package:flutter/material.dart';
 
+import '../Intro_vc.dart';
+import 'ConstTools.dart';
+
 class DialogTools {
-    
-    static alertDialg(String button, String title, String message, context) async
-    {
-        var result = await showDialog(context: context, builder: (context)
-        {
-            return AlertDialog
-            (
-                title: title == "" ? null : Text(title), 
-                content: Text(message),
-                actions:
-                [
-                    TextButton
-                    (
-                        child: Text(button),
-                        onPressed: ()
-                        {
-                            Navigator.pop(context, 1);
-                        }
-                    ),
-                ],
-
-            );
+  static alertDialg(
+      String button, String title, String message, context) async {
+    var result = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: title == "" ? null : Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  child: Text(button),
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                  }),
+            ],
+          );
         });
 
-        return result;
-    }
+    return result;
+  }
 
-    alertDialgTwoButtons(String button1, String button2, String title, String message, context) async
-    {
-        var result = await showDialog(context: context, builder: (context)
-        {
-            return AlertDialog
-            (
-                title: Text(title), 
-                content: Text(message),
-                actions:
-                [
-                    TextButton
-                    (
-                        child: Text(button1),
-                        onPressed: ()
-                        {
-                            Navigator.pop(context, 1);
-                        }
-                    ),
-
-                    TextButton
-                    (
-                        child: Text(button2),
-                        onPressed: ()
-                        {
-                            Navigator.pop(context, 2);
-                        }
-                    ),
-                ],
-
-            );
+  static alertMultiloginDialg(
+      String button, String title, String message, context) async {
+    var result = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: title == "" ? null : Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  child: Text(button),
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                    ConstTools.signOutHandling(context);
+                  }),
+            ],
+          );
         });
 
-        return result;
-    }
+    return result;
+  }
 
+  alertDialgTwoButtons(String button1, String button2, String title,
+      String message, context) async {
+    var result = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  child: Text(button1),
+                  onPressed: () {
+                    Navigator.pop(context, 1);
+                  }),
+              TextButton(
+                  child: Text(button2),
+                  onPressed: () {
+                    Navigator.pop(context, 2);
+                  }),
+            ],
+          );
+        });
+
+    return result;
+  }
 }
