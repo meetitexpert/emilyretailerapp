@@ -30,7 +30,8 @@ class _tabbart_Controller_State extends State<tabbartController> {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         backgroundColor: const Color(ColorTools.navigationBarColor),
-        inactiveColor: Color(0xFFA9A9A9),
+        inactiveColor: const Color(0xFFA9A9A9),
+        activeColor: const Color(ColorTools.primaryColor),
         height: 60,
         iconSize: 35,
         items: const <BottomNavigationBarItem>[

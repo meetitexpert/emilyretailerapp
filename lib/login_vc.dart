@@ -38,7 +38,7 @@ class _LoginVcState extends State<LoginVc> {
 
     //get tracking id if empty
     final trackingID = ConstTools.prefs?.getString(ConstTools.spTrackingId);
-    if (trackingID!.isEmpty) {
+    if (trackingID == null) {
       getTrackingID();
     }
   }

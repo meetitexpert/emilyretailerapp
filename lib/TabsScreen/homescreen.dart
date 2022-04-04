@@ -1,8 +1,10 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:async';
 
+import 'package:emilyretailerapp/Model/CustomerFeedback/CustomersFeedbackEntity.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:emilyretailerapp/Model/RetailerRewardEntity.dart';
-import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/DialogTools.dart';
@@ -31,9 +33,12 @@ class _homeScreenState extends State<homeScreen>
     keepPage: true,
   );
 
+  late LoginEntity currentUser;
   List<RetailerRewardEntity> promotionslist = [];
   List<RetailerRewardEntity> rewardsList = [];
-  int selectedIndex = 0;
+  List<CustomerFeedbackEntity> customersFeedbackList = [];
+  int selectedPromotionIndex = 0;
+  int selectedFeedbackIndex = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -41,7 +46,7 @@ class _homeScreenState extends State<homeScreen>
   @override
   void initState() {
     super.initState();
-
+    currentUser = ConstTools().retreiveSavedUserDetail();
     Timer.periodic(const Duration(milliseconds: 5), ((Timer t) {
       loadHomePromotionsAndRewardData();
       t.cancel();
@@ -52,14 +57,11 @@ class _homeScreenState extends State<homeScreen>
     Response response;
     HttpService http = HttpService();
 
-    LoginEntity user = ConstTools().retreiveSavedUserDetail();
-
     Map<String, dynamic> params = {
-      "retailerUserId": user.userId,
+      "retailerUserId": currentUser.userId,
       "version": "1",
       "type": "B1",
       "lang": "en",
-      "clientClass": AppTools.clientClass
     };
 
     try {
@@ -85,7 +87,7 @@ class _homeScreenState extends State<homeScreen>
                 .where((element) => element.type == "1")
                 .toList();
 
-            setState(() {});
+            getCustomerFeedbacks();
           }
         } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
           DialogTools.alertMultiloginDialg(
@@ -94,6 +96,44 @@ class _homeScreenState extends State<homeScreen>
             int.parse(ConstTools.multiDevicesErrorCodeTwo)) {
           DialogTools.alertMultiloginDialg(
               ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+        }
+      } else {
+        http.checkHttpError(context, HttpErrorType.other, response);
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future getCustomerFeedbacks() async {
+    Response response;
+    HttpService http = HttpService();
+
+    Map<String, dynamic> params = {
+      "retailerUserId": currentUser.userId,
+      "version": "1",
+      "type": "B1",
+    };
+
+    try {
+      response = await http.postRequest(
+          ConstTools.pathV3 + ConstTools.apiGetCustomersFeedbacks,
+          params,
+          context);
+      if (response.statusCode == 200) {
+        debugPrint("$response");
+        final int statuscode = response.data["statusCode"];
+        if (statuscode == 0) {
+          List<dynamic> returnData = response.data["returnData"];
+          if (returnData.isNotEmpty) {
+            for (var i = 0; i < returnData.length; i++) {
+              CustomerFeedbackEntity feedback =
+                  CustomerFeedbackEntity.getFromJson(returnData[i]);
+              customersFeedbackList.add(feedback);
+            }
+
+            setState(() {});
+          }
         }
       } else {
         http.checkHttpError(context, HttpErrorType.other, response);
@@ -135,7 +175,7 @@ class _homeScreenState extends State<homeScreen>
       onIndexChanged: (index) {
         if (section == 0) {
           setState(() {
-            selectedIndex = index;
+            selectedPromotionIndex = index;
           });
         }
       },
@@ -143,7 +183,7 @@ class _homeScreenState extends State<homeScreen>
   }
 
   Widget promotiontextWidget() {
-    RetailerRewardEntity promotion = promotionslist[selectedIndex];
+    RetailerRewardEntity promotion = promotionslist[selectedPromotionIndex];
     return Expanded(
       child: Container(
           padding: const EdgeInsets.all(8),
@@ -159,15 +199,22 @@ class _homeScreenState extends State<homeScreen>
     );
   }
 
-  Widget paginationWidget() {
+  Widget paginationWidget(int section) {
     return Center(
       child: Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
           child: AnimatedSmoothIndicator(
-            activeIndex: selectedIndex,
-            count: promotionslist.length,
+            activeIndex:
+                section == 0 ? selectedPromotionIndex : selectedFeedbackIndex,
+            count: section == 0
+                ? promotionslist.length
+                : customersFeedbackList.length > 5
+                    ? 5
+                    : customersFeedbackList.length,
             effect: const WormEffect(
               paintStyle: PaintingStyle.stroke,
+              dotWidth: 10,
+              dotHeight: 10,
               strokeWidth: 1,
               activeDotColor: Color(ColorTools.primaryColor),
             ),
@@ -184,7 +231,7 @@ class _homeScreenState extends State<homeScreen>
             height: 200,
             child: swiperWidget(section)),
         promotiontextWidget(),
-        paginationWidget()
+        paginationWidget(section)
       ],
     );
   }
@@ -197,7 +244,48 @@ class _homeScreenState extends State<homeScreen>
     );
   }
 
-  Widget RatingSwiper() {
+  Widget ratingWidget(int section) {
+    const double height = 115;
+    return Column(
+      children: [
+        Container(
+            color: Colors.white,
+            width: PixelTools.screenWidth,
+            height: height,
+            child: SizedBox(
+              height: height,
+              width: PixelTools.screenWidth,
+              child: ratingSwiperWidget(height),
+            )),
+        paginationWidget(section)
+      ],
+    );
+  }
+
+  Widget ratingSwiperWidget(double height) {
+    return Swiper(
+      itemBuilder: (BuildContext context, int index) {
+        CustomerFeedbackEntity feedback = customersFeedbackList[index];
+        return RatingHandlerWidget(feedback);
+      },
+      itemCount: 5,
+      itemHeight: height,
+      itemWidth: PixelTools.screenWidth,
+      loop: false,
+      onTap: (index) {
+        debugPrint('$index');
+      },
+      onIndexChanged: (index) {
+        setState(() {
+          selectedFeedbackIndex = index;
+        });
+      },
+    );
+  }
+
+  Widget RatingHandlerWidget(CustomerFeedbackEntity feedback) {
+    String name = feedback.memberFirstName + feedback.memberLastName;
+
     return Container(
       color: const Color(0xFFE1E1E1),
       child: Column(
@@ -207,7 +295,8 @@ class _homeScreenState extends State<homeScreen>
             padding: const EdgeInsets.all(5),
             child: RatingBar.builder(
               ignoreGestures: true,
-              initialRating: 3,
+              initialRating:
+                  double.parse(feedback.questionAnswers[0].answerValue),
               minRating: 1,
               direction: Axis.horizontal,
               itemCount: 5,
@@ -221,15 +310,19 @@ class _homeScreenState extends State<homeScreen>
               },
             ),
           ),
-          const Center(
+          Center(
               child: Padding(
-            padding: EdgeInsets.only(bottom: 10),
-            child: Text('Bilal Hussain'),
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              name,
+              style: const TextStyle(
+                  fontFamily: 'Roboto-bold', fontWeight: FontWeight.bold),
+            ),
           )),
-          const Center(
+          Center(
               child: Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: Text('Mar 24, 2022 at 12:23 PM'),
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Text(feedback.submitDateTime),
           )),
         ],
       ),
@@ -248,7 +341,7 @@ class _homeScreenState extends State<homeScreen>
         if (indexPath.section == 0 || indexPath.section == 1) {
           return promotionandRewardWidgets(indexPath.section);
         } else {
-          return RatingSwiper();
+          return ratingWidget(indexPath.section);
         }
       },
       headerInSection: (context, section) => Container(

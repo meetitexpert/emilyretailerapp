@@ -105,6 +105,7 @@ class HttpService {
     parameters ??= <String, String>{};
 
     parameters["access_token"] = AppTools.accessToken;
+    parameters["clientClass"] = AppTools.clientClass;
 
     String? tracnkingId = ConstTools.prefs?.getString(ConstTools.spTrackingId);
     if (tracnkingId != null && !api.contains(ConstTools.apiGetTrackingId)) {

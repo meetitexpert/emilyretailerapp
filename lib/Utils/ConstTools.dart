@@ -39,6 +39,7 @@ class ConstTools {
   static const String apiGetTrackingId = "GetTrackingId";
   static const String apiUserLogin = "RetailerUserLogin";
   static const String apiGetHomeRewards = "getHomeReward.mvc";
+  static const String apiGetCustomersFeedbacks = "getSurveyQuestionAnswer.mvc";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 
