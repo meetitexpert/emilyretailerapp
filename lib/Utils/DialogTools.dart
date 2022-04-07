@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-
-import '../Intro_vc.dart';
 import 'ConstTools.dart';
 
 class DialogTools {
