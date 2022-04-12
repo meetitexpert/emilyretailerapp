@@ -10,14 +10,13 @@ import 'package:flutter/services.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await AppTools.init();
+  DeviceTools.init();
   ConstTools.prefs = await SharedPreferences.getInstance();
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
     SystemUiOverlay.bottom, //This line is used for showing the bottom bar
   ]);
-
-  DeviceTools.init();
-  AppTools.init();
 
   runApp(MyApp());
 }

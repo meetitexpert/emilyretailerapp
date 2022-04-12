@@ -45,7 +45,7 @@ class DialogTools {
     return result;
   }
 
-  alertDialgTwoButtons(String button1, String button2, String title,
+  static alertDialgTwoButtons(String button1, String button2, String title,
       String message, context) async {
     var result = await showDialog(
         context: context,
@@ -58,6 +58,10 @@ class DialogTools {
                   child: Text(button1),
                   onPressed: () {
                     Navigator.pop(context, 1);
+                    if (button1 == ConstTools.signOUt) {
+                      //signout handling
+                      ConstTools.signOutHandling(context);
+                    }
                   }),
               TextButton(
                   child: Text(button2),

@@ -200,8 +200,6 @@ class _PayoutsScreenState extends State<PayoutsScreen>
         return Container();
       },
       refreshFooterBuilder: (context, status) {
-        payoutDataPageNo = payoutDataPageNo + 1;
-        getPayoutsFromServer();
         return DefaultRefreshIndicator(
           text: textFromStatus(status),
           icon: iconFromStatus(status),

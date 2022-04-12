@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, must_call_super, camel_case_types, must_be_immutable
 
 import 'dart:async';
 
@@ -19,7 +19,7 @@ import '../EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:dio/dio.dart';
 
 class homeScreen extends StatefulWidget {
-  const homeScreen({Key? key}) : super(key: key);
+  homeScreen({Key? key}) : super(key: key);
 
   @override
   _homeScreenState createState() => _homeScreenState();
@@ -45,15 +45,13 @@ class _homeScreenState extends State<homeScreen>
 
   @override
   void initState() {
-    super.initState();
     currentUser = ConstTools().retreiveSavedUserDetail();
-    Timer.periodic(const Duration(milliseconds: 5), ((Timer t) {
-      loadHomePromotionsAndRewardData();
-      t.cancel();
-    }));
+    loadHomePromotionsAndRewardData();
+
+    super.initState();
   }
 
-  Future loadHomePromotionsAndRewardData() async {
+  Future<List<RetailerRewardEntity>> loadHomePromotionsAndRewardData() async {
     Response response;
     HttpService http = HttpService();
 
@@ -87,7 +85,7 @@ class _homeScreenState extends State<homeScreen>
                 .where((element) => element.type == "1")
                 .toList();
 
-            getCustomerFeedbacks();
+            await getCustomerFeedbacks();
           }
         } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
           DialogTools.alertMultiloginDialg(
@@ -103,6 +101,8 @@ class _homeScreenState extends State<homeScreen>
     } on Exception catch (e) {
       debugPrint(e.toString());
     }
+
+    return promotionslist;
   }
 
   Future getCustomerFeedbacks() async {
@@ -263,24 +263,26 @@ class _homeScreenState extends State<homeScreen>
   }
 
   Widget ratingSwiperWidget(double height) {
-    return Swiper(
-      itemBuilder: (BuildContext context, int index) {
-        CustomerFeedbackEntity feedback = customersFeedbackList[index];
-        return RatingHandlerWidget(feedback);
-      },
-      itemCount: 5,
-      itemHeight: height,
-      itemWidth: PixelTools.screenWidth,
-      loop: false,
-      onTap: (index) {
-        debugPrint('$index');
-      },
-      onIndexChanged: (index) {
-        setState(() {
-          selectedFeedbackIndex = index;
-        });
-      },
-    );
+    return customersFeedbackList.isNotEmpty
+        ? Swiper(
+            itemBuilder: (BuildContext context, int index) {
+              CustomerFeedbackEntity feedback = customersFeedbackList[index];
+              return RatingHandlerWidget(feedback);
+            },
+            itemCount: 5,
+            itemHeight: height,
+            itemWidth: PixelTools.screenWidth,
+            loop: false,
+            onTap: (index) {
+              debugPrint('$index');
+            },
+            onIndexChanged: (index) {
+              setState(() {
+                selectedFeedbackIndex = index;
+              });
+            },
+          )
+        : const CircularProgressIndicator();
   }
 
   Widget RatingHandlerWidget(CustomerFeedbackEntity feedback) {
@@ -370,6 +372,8 @@ class _homeScreenState extends State<homeScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
         body: promotionslist.isNotEmpty
             ? CupertinoTableView(
@@ -382,5 +386,28 @@ class _homeScreenState extends State<homeScreen>
                     margin: const EdgeInsets.only(top: 50, bottom: 30),
                     child: const CircularProgressIndicator()),
               ));
+
+    /*FutureBuilder(
+      future: loadHomePromotionsAndRewardData(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: Container(
+                margin: const EdgeInsets.only(top: 50, bottom: 30),
+                child: const CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return CupertinoTableView(
+            delegate: generateDelegate(),
+            backgroundColor: Colors.white,
+            padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
+          );
+        } else {
+          return const Text('No data found');
+        }
+      },
+    ));*/
   }
 }

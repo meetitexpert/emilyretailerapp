@@ -23,6 +23,8 @@ class _tabbart_Controller_State extends State<tabbartController> {
     MoreScreen()
   ];
 
+  int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     PixelTools.init(
@@ -34,6 +36,9 @@ class _tabbart_Controller_State extends State<tabbartController> {
         activeColor: const Color(ColorTools.primaryColor),
         height: 60,
         iconSize: 35,
+        onTap: (index) => setState(() {
+          currentIndex = index;
+        }),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.home),
@@ -56,7 +61,12 @@ class _tabbart_Controller_State extends State<tabbartController> {
       tabBuilder: (context, index) {
         return CupertinoTabView(
           builder: (BuildContext context) {
-            return data[index];
+            // return data[index];
+            return CupertinoTabView(
+              builder: (BuildContext context) {
+                return data[index];
+              },
+            );
           },
         );
       },

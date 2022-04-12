@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,25 @@ class ConstTools {
 
   ////////////////////////////Buttons Labels//////////////////////////////////
   static const String buttonOk = "Ok";
+  static const String signOUt = "Sign Out";
+  static const String cancel = "Cancel";
+
+  ////////////////////////////More Options///////////////////////////////////
+
+  static const String journal = "Journal";
+  static const String notifioction = "Notification";
+  static const String security = "Security";
+  static const String contactUs = "Contact Us";
+  static const String faqs = "FAQs";
+  static const String termsCondition = "Terms & Conditions";
+  static const String privacyPolicy = "Privacy Policy";
+  static const String aboutApp = "About App";
+  static const String signout = "Sign Out";
+
+  ///////////////////////URLs//////////////////////////
+  static const String faqURL = "https://emilyrewards.com/faq/retailerfaq/";
+  static const String termsURL = "https://emilyrewards.com/terms";
+  static const String privacyURL = "https://emilyrewards.com/privacy";
 
   ///////////////// SignOut handling /////////////
   static signOutHandling(BuildContext context) {

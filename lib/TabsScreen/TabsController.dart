@@ -44,7 +44,7 @@ class _TabsControllerState extends State<TabsController>
                 )
               ]),
         ),
-        body: TabBarView(controller: _controller, children: const <Widget>[
+        body: TabBarView(controller: _controller, children: <Widget>[
           homeScreen(),
           PayoutsScreen(),
           MoreScreen(),

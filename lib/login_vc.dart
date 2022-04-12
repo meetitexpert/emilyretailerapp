@@ -12,6 +12,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:dio/dio.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/services.dart';
 
 class LoginVc extends StatefulWidget {
   const LoginVc({Key? key}) : super(key: key);
@@ -200,6 +201,7 @@ class _LoginVcState extends State<LoginVc> {
                       hintText: 'Enter your email',
                       contentPadding: EdgeInsets.only(bottom: 15.0)),
                   keyboardType: TextInputType.emailAddress,
+                  autofillHints: const [AutofillHints.email],
                 ),
               ),
             ),
@@ -248,6 +250,8 @@ class _LoginVcState extends State<LoginVc> {
                       border: InputBorder.none,
                       hintText: 'Enter your password',
                       contentPadding: EdgeInsets.only(bottom: 15.0)),
+                  autofillHints: const [AutofillHints.password],
+                  onEditingComplete: () => TextInput.finishAutofillContext(),
                 ),
               ),
             ),
