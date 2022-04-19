@@ -231,6 +231,8 @@ class _PayoutsScreenState extends State<PayoutsScreen>
       case RefreshStatus.prepared:
         return 'prepared';
       case RefreshStatus.refreshing:
+        payoutDataPageNo = payoutDataPageNo + 1;
+        getPayoutsFromServer();
         return 'refreshing';
       case RefreshStatus.completed:
         return 'completed';

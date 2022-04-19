@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:emilyretailerapp/Model/CustomerFeedback/CustomersFeedbackEntity.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:emilyretailerapp/Model/RetailerRewardEntity.dart';
+import 'package:emilyretailerapp/TabsScreen/rewardsDetail.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/DialogTools.dart';
@@ -27,7 +28,7 @@ class homeScreen extends StatefulWidget {
 
 // ignore: camel_case_types
 class _homeScreenState extends State<homeScreen>
-    with AutomaticKeepAliveClientMixin<homeScreen> {
+    with AutomaticKeepAliveClientMixin<homeScreen>, WidgetsBindingObserver {
   final controller = PageController(
     viewportFraction: 0.8,
     keepPage: true,
@@ -45,10 +46,23 @@ class _homeScreenState extends State<homeScreen>
 
   @override
   void initState() {
+    super.initState();
     currentUser = ConstTools().retreiveSavedUserDetail();
     loadHomePromotionsAndRewardData();
+    WidgetsBinding.instance?.addObserver(this);
+  }
 
-    super.initState();
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      debugPrint('Resumed');
+    } else if (state == AppLifecycleState.paused) {
+      debugPrint('Puased');
+    } else if (state == AppLifecycleState.detached) {
+      debugPrint('detached');
+    } else if (state == AppLifecycleState.inactive) {
+      debugPrint('inactive');
+    }
   }
 
   Future<List<RetailerRewardEntity>> loadHomePromotionsAndRewardData() async {
@@ -170,6 +184,10 @@ class _homeScreenState extends State<homeScreen>
       itemWidth: PixelTools.screenWidth,
       loop: false,
       onTap: (index) {
+        if (section == 1) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => rewardDetail())));
+        }
         debugPrint('$index');
       },
       onIndexChanged: (index) {
@@ -365,14 +383,14 @@ class _homeScreenState extends State<homeScreen>
 
       pressedOpacity: 0.4,
       canSelectRowAtIndexPath: (indexPath) => false,
-      didSelectRowAtIndexPath: (indexPath) => debugPrint('$indexPath'),
+      didSelectRowAtIndexPath: (indexPath) => {},
       // marginForSection: marginForSection, // set marginForSection when using boxShadow
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
 
     return Scaffold(
         body: promotionslist.isNotEmpty

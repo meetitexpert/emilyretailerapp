@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
@@ -7,6 +9,7 @@ import '../Utils/DeviceTools.dart';
 import 'package:date_format/date_format.dart';
 
 import '../Utils/DialogTools.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 enum HttpErrorType {
   httpTimeout,
@@ -29,6 +32,19 @@ class HttpService {
     dio = Dio(BaseOptions(baseUrl: ConstTools.hostURL));
 
     initilizerInterceptors();
+  }
+
+  Future isInternetAvailable() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      // I am connected to a mobile network.
+      return true;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      // I am connected to a wifi network.
+      return true;
+    }
+
+    return false;
   }
 
   //GET Request
@@ -136,7 +152,9 @@ class HttpService {
   //Errors hanlding
   // ignore: non_constant_identifier_names
   void DioErrorHanlding(BuildContext context, DioError error) {
-    if (error.type == DioErrorType.connectTimeout ||
+    if (isInternetAvailable() == false) {
+      checkHttpError(context, HttpErrorType.noConnections, null);
+    } else if (error.type == DioErrorType.connectTimeout ||
         error.type == DioErrorType.sendTimeout ||
         error.type == DioErrorType.receiveTimeout) {
       checkHttpError(context, HttpErrorType.httpTimeout, null);

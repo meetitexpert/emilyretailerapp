@@ -1,13 +1,18 @@
 import 'package:cupertino_table_view/delegate/cupertino_table_view_delegate.dart';
 import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
+import 'package:emilyretailerapp/TabsScreen/MoreSection/About.dart';
+import 'package:emilyretailerapp/TabsScreen/MoreSection/Notifications.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/webViewScreen.dart';
+import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/DialogTools.dart';
 import 'package:emilyretailerapp/Utils/PixelTools.dart';
+import 'package:emilyretailerapp/Utils/DeviceTools.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../Model/LoginEntity.dart';
 import '../Utils/ConstTools.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class MoreScreen extends StatefulWidget {
   const MoreScreen({Key? key}) : super(key: key);
@@ -138,7 +143,22 @@ class _MoreScreenState extends State<MoreScreen> {
   }
 
   handlingAction(int index) {
-    if (moreOptions[index] == ConstTools.faqs) {
+    if (moreOptions[index] == ConstTools.notifioction) {
+      //notification
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Notifications(isNotification: true),
+          ));
+    } else if (moreOptions[index] == ConstTools.aboutApp) {
+      //aboutApp
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const About(),
+          ));
+    } else if (moreOptions[index] == ConstTools.faqs) {
+      //FAQ
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -148,6 +168,7 @@ class _MoreScreenState extends State<MoreScreen> {
             ),
           ));
     } else if (moreOptions[index] == ConstTools.termsCondition) {
+      //T&C
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -156,7 +177,11 @@ class _MoreScreenState extends State<MoreScreen> {
               title: ConstTools.termsCondition,
             ),
           ));
+    } else if (moreOptions[index] == ConstTools.contactUs) {
+      //Email
+      sendEmail();
     } else if (moreOptions[index] == ConstTools.privacyPolicy) {
+      //PrivacyPolicy
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -170,6 +195,50 @@ class _MoreScreenState extends State<MoreScreen> {
       DialogTools.alertDialgTwoButtons(ConstTools.signOUt, ConstTools.cancel,
           "Are you sure you want to sign out?", "", context);
     }
+  }
+
+  Future<void> sendEmail() async {
+    final String model = DeviceTools.deviceModel;
+    final String osVersion = DeviceTools.osVersion;
+    final String appVersion = AppTools.appVersion;
+    final String userEmail = currentUser.email;
+
+    final Email email = Email(
+      body: """
+                <p><b>
+                </br>
+                </br>
+                </br>
+                
+                * Device: $model </br>
+                * OS: $osVersion </br>
+                * App Version: $appVersion </br>
+                * User email: $userEmail </br>
+                </b></p>
+                """,
+      subject: "Retailer Feedback on EMILY Retailer App",
+      cc: ["pyong@envisionmobile.com"],
+      recipients: ["support@emilyrewards.com"],
+      isHTML: true,
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      print(error);
+      platformResponse = error.toString();
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(platformResponse),
+      ),
+    );
   }
 
   @override

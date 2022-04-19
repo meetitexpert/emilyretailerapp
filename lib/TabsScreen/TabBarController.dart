@@ -1,3 +1,7 @@
+// ignore_for_file: camel_case_types, prefer_const_constructors_in_immutables, prefer_const_constructors
+
+import 'dart:math';
+
 import 'package:emilyretailerapp/TabsScreen/homescreen.dart';
 import 'package:emilyretailerapp/TabsScreen/morescreen.dart';
 import 'package:emilyretailerapp/TabsScreen/payoutscreen.dart';
@@ -18,10 +22,12 @@ class tabbartController extends StatefulWidget {
 class _tabbart_Controller_State extends State<tabbartController> {
   List<Widget> data = [
     homeScreen(),
-    PayoutsScreen(),
-    ScanScreen(),
-    MoreScreen()
+    const PayoutsScreen(),
+    const ScanScreen(),
+    const MoreScreen()
   ];
+
+  List<String> keys = ["key1", "key2", "key3", "key4"];
 
   int currentIndex = 0;
 
@@ -60,15 +66,10 @@ class _tabbart_Controller_State extends State<tabbartController> {
       ),
       tabBuilder: (context, index) {
         return CupertinoTabView(
-          builder: (BuildContext context) {
-            // return data[index];
-            return CupertinoTabView(
-              builder: (BuildContext context) {
-                return data[index];
-              },
-            );
-          },
-        );
+            key: ValueKey(keys[index]),
+            builder: (BuildContext context) {
+              return data[index];
+            });
       },
     );
   }

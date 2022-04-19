@@ -1,10 +1,30 @@
+import 'package:emilyretailerapp/localAuth/local_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:emilyretailerapp/login_vc.dart';
 
 import 'Utils/PixelTools.dart';
 
-class IntroVC extends StatelessWidget {
+class IntroVC extends StatefulWidget {
   const IntroVC({Key? key}) : super(key: key);
+
+  @override
+  State<IntroVC> createState() => _IntroVCState();
+}
+
+class _IntroVCState extends State<IntroVC> {
+  bool _isBiometricAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkBiometricAvailable();
+  }
+
+  void checkBiometricAvailable() async {
+    bool value = await LocalAuth.hasBiometric();
+    _isBiometricAvailable = value;
+    setState(() {});
+  }
 
   TextStyle fontStyleSettings(double size, FontWeight weight) {
     return TextStyle(
@@ -18,11 +38,16 @@ class IntroVC extends StatelessWidget {
     debugPrint('EMILY');
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const LoginVc()));
-    // Navigator.pushNamed(context, '/loginVc');
   }
 
-  void loginWithTouchId(BuildContext context) {
+  void loginWithTouchId(BuildContext context) async {
     debugPrint('TOUCHID');
+    final isAuthenticated = await LocalAuth.authenticate();
+    if (isAuthenticated) {
+      debugPrint('VERIFIED');
+    } else {
+      debugPrint('NO VERIFIED');
+    }
   }
 
   Widget textUnderLogo() {
@@ -46,7 +71,7 @@ class IntroVC extends StatelessWidget {
             Container(
               decoration: const BoxDecoration(color: Colors.blue),
               width: 280,
-              height: 40,
+              height: _isBiometricAvailable ? 40 : 0,
               child: TextButton(
                 onPressed: (() => loginWithTouchId(context)),
                 child: Text(
@@ -55,9 +80,13 @@ class IntroVC extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            _isBiometricAvailable
+                ? const SizedBox(
+                    height: 10,
+                  )
+                : const SizedBox(
+                    height: 0,
+                  ),
             Container(
               decoration: const BoxDecoration(color: Colors.blue),
               width: 280,
