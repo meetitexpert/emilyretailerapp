@@ -58,7 +58,7 @@ dependencies:
   local_auth: ^2.0.0
   url_launcher: ^6.0.20
   flip_card: ^0.6.0
-  maps_launcher: ^2.0.1
+  jiffy: ^5.0.0
   
 
 dev_dependencies:

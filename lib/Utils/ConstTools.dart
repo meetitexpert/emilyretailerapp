@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:date_format/date_format.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +41,8 @@ class ConstTools {
   static const String apiGetHomeRewards = "getHomeReward.mvc";
   static const String apiGetCustomersFeedbacks = "getSurveyQuestionAnswer.mvc";
   static const String apiGetRetailerPayouts = "GetPayoutList.mvc";
+  static const String apiGetRewardsDetail = "getReward.mvc";
+  static const String apiGetRetailerLocationsDetail = "RetailerGetLocationV2";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 
@@ -125,5 +128,16 @@ class ConstTools {
       progress?.dismiss();
       showingHud = false;
     }
+  }
+
+  static String dateFromString(String strDate) {
+    final date = DateTime.parse(strDate);
+    return formatDate(date, [hh, ':', nn, ':', ss, am]);
+  }
+
+  static convertDateFromString(String strDate, BuildContext context) {
+    final time = TimeOfDay(hour: int.parse(strDate), minute: 0);
+    print(time);
+    return time.format(context);
   }
 }

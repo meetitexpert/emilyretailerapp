@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:emilyretailerapp/Model/CustomerFeedback/CustomersFeedbackEntity.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/Model/RetailerLocationsDetail.dart';
 import 'package:emilyretailerapp/Model/RetailerRewardEntity.dart';
 import 'package:emilyretailerapp/TabsScreen/rewardsDetail.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
@@ -35,6 +36,7 @@ class _homeScreenState extends State<homeScreen>
   );
 
   late LoginEntity currentUser;
+  late RetailerLocationsDetail retailerLocationdetail;
   List<RetailerRewardEntity> promotionslist = [];
   List<RetailerRewardEntity> rewardsList = [];
   List<CustomerFeedbackEntity> customersFeedbackList = [];
@@ -99,6 +101,7 @@ class _homeScreenState extends State<homeScreen>
                 .where((element) => element.type == "1")
                 .toList();
 
+            await getRetailerLocationDetail();
             await getCustomerFeedbacks();
           }
         } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
@@ -157,6 +160,33 @@ class _homeScreenState extends State<homeScreen>
     }
   }
 
+  Future getRetailerLocationDetail() async {
+    Response response;
+    HttpService http = HttpService();
+
+    Map<String, dynamic> params = {
+      "userId": currentUser.userId,
+      "locationId": int.parse(currentUser.locationId)
+    };
+
+    try {
+      response = await http.postRequest(
+          ConstTools.path + ConstTools.apiGetRetailerLocationsDetail,
+          params,
+          context);
+      if (response.statusCode == 200) {
+        debugPrint("$response");
+
+        Map<String, dynamic> returnData = response.data;
+        if (returnData.isNotEmpty) {
+          retailerLocationdetail = RetailerLocationsDetail.fromJson(returnData);
+        }
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   Widget swiperWidget(int section) {
     return Swiper(
       itemBuilder: (BuildContext context, int index) {
@@ -185,8 +215,13 @@ class _homeScreenState extends State<homeScreen>
       loop: false,
       onTap: (index) {
         if (section == 1) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => rewardDetail())));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => rewardDetail(
+                        rewardId: rewardsList[0].rewardId.toString(),
+                        retailerLocationDetail: retailerLocationdetail,
+                      ))));
         }
         debugPrint('$index');
       },

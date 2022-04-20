@@ -121,10 +121,14 @@ class HttpService {
     parameters ??= <String, String>{};
 
     parameters["access_token"] = AppTools.accessToken;
-    parameters["clientClass"] = AppTools.clientClass;
+    if (!api.contains(ConstTools.apiGetRetailerLocationsDetail)) {
+      parameters["clientClass"] = AppTools.clientClass;
+    }
 
     String? tracnkingId = ConstTools.prefs?.getString(ConstTools.spTrackingId);
-    if (tracnkingId != null && !api.contains(ConstTools.apiGetTrackingId)) {
+    if (tracnkingId != null &&
+        !api.contains(ConstTools.apiGetTrackingId) &&
+        !api.contains(ConstTools.apiGetRetailerLocationsDetail)) {
       parameters["trackingId"] = tracnkingId;
     }
 
@@ -141,10 +145,6 @@ class HttpService {
       debugPrint('${request.method} ${request.path}');
       handler.next(request);
     }, onResponse: (response, handler) {
-      if (response.statusCode == 200) {
-        debugPrint(response.data["status"]);
-      }
-
       handler.next(response);
     }));
   }
