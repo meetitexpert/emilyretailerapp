@@ -59,6 +59,7 @@ dependencies:
   url_launcher: ^6.0.20
   flip_card: ^0.6.0
   jiffy: ^5.0.0
+  expandable: ^5.0.1
   
 
 dev_dependencies:

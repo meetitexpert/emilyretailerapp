@@ -6,6 +6,7 @@ import 'package:emilyretailerapp/Model/CustomerFeedback/CustomersFeedbackEntity.
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:emilyretailerapp/Model/RetailerLocationsDetail.dart';
 import 'package:emilyretailerapp/Model/RetailerRewardEntity.dart';
+import 'package:emilyretailerapp/TabsScreen/productListScreen.dart';
 import 'package:emilyretailerapp/TabsScreen/rewardsDetail.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
@@ -222,6 +223,14 @@ class _homeScreenState extends State<homeScreen>
                         rewardId: rewardsList[0].rewardId.toString(),
                         retailerLocationDetail: retailerLocationdetail,
                       ))));
+        } else {
+          RetailerRewardEntity promotion = promotionslist[index];
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => ProducListScreen(
+                      promotionId: promotion.rewardId.toString(),
+                      retailerLocationDetail: retailerLocationdetail))));
         }
         debugPrint('$index');
       },

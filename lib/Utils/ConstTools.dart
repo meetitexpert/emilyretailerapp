@@ -43,6 +43,7 @@ class ConstTools {
   static const String apiGetRetailerPayouts = "GetPayoutList.mvc";
   static const String apiGetRewardsDetail = "getReward.mvc";
   static const String apiGetRetailerLocationsDetail = "RetailerGetLocationV2";
+  static const String apiGetPromotionDetail = "getPromotion.mvc";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 
