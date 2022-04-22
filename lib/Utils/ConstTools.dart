@@ -28,6 +28,8 @@ class ConstTools {
 ////////////////////////////////////////////////////////////////////////////////
   static const String hostURL =
       "https://services.emilyrewards.com/RLP-Service/";
+  static const String imageBaseURL =
+      "https://services.emilyrewards.com:3471/images/";
 
   static const String hostPortForStrip = ":3454/";
   static const String hostPortForImage = ":3471/images/";
@@ -44,6 +46,7 @@ class ConstTools {
   static const String apiGetRewardsDetail = "getReward.mvc";
   static const String apiGetRetailerLocationsDetail = "RetailerGetLocationV2";
   static const String apiGetPromotionDetail = "getPromotion.mvc";
+  static const String apiGetProducts = "getProductList.mvc";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 

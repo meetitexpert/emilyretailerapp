@@ -248,6 +248,7 @@ class _homeScreenState extends State<homeScreen>
     RetailerRewardEntity promotion = promotionslist[selectedPromotionIndex];
     return Expanded(
       child: Container(
+          width: PixelTools.screenWidth,
           padding: const EdgeInsets.all(8),
           color: const Color(0xFFE1E1E1),
           child: Text(promotion.rewardShortDescription,

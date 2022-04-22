@@ -5,6 +5,7 @@ import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
 import 'package:date_format/date_format.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/Model/ProductsEntity/Product.dart';
 import 'package:emilyretailerapp/Model/PromotionEntity.dart';
 import 'package:emilyretailerapp/Model/RetailerLocationsDetail.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
@@ -47,7 +48,7 @@ class _ProducListScreenState extends State<ProducListScreen> {
     "Redeem Terms & Conditions",
     "Location"
   ];
-  List<String> productsList = [];
+  List<Products> productsList = [];
 
   @override
   void initState() {
@@ -81,6 +82,59 @@ class _ProducListScreenState extends State<ProducListScreen> {
           Map<String, dynamic> returnData = response.data["returnData"];
           if (returnData.isNotEmpty) {
             promotionDetail = PromotionEntity.fromjson(returnData);
+            await getProducts();
+          }
+        } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
+          DialogTools.alertMultiloginDialg(
+              ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+        } else if (statuscode ==
+            int.parse(ConstTools.multiDevicesErrorCodeTwo)) {
+          DialogTools.alertMultiloginDialg(
+              ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+        }
+      } else {
+        http.checkHttpError(context, HttpErrorType.other, response);
+      }
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  Future getProducts() async {
+    Response response;
+    HttpService http = HttpService();
+
+    DateTime firstDayCurrentMonth =
+        DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
+
+    DateTime lastDayCurrentMonth = DateTime.utc(
+      DateTime.now().year,
+      DateTime.now().month + 1,
+    ).subtract(Duration(days: 1));
+
+    Map<String, dynamic> params = {
+      "retailerUserId": currentUser.userId,
+      "type": "B4",
+      "promotionId": promotionID,
+      "version": "1",
+      "lang": "en",
+      "startUtcDateTime": "${firstDayCurrentMonth.millisecondsSinceEpoch}",
+      "endUtcDateTime": "${lastDayCurrentMonth.millisecondsSinceEpoch}",
+    };
+
+    try {
+      response = await http.postRequest(
+          ConstTools.pathV3 + ConstTools.apiGetProducts, params, context);
+      if (response.statusCode == 200) {
+        debugPrint("$response");
+        final int statuscode = response.data["statusCode"];
+        if (statuscode == 0) {
+          List<dynamic> returnData = response.data["returnData"];
+          if (returnData.isNotEmpty) {
+            for (var i = 0; i < returnData.length; i++) {
+              Products product = Products.fromJson(returnData[i]);
+              productsList.add(product);
+            }
             isPromotionDetailLoaded = true;
             setState(() {});
           }
@@ -108,17 +162,28 @@ class _ProducListScreenState extends State<ProducListScreen> {
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
           ),
-          itemCount: 3,
+          itemCount: productsList.length,
           itemBuilder: (BuildContext context, int index) {
+            Products product = productsList[index];
             return Card(
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: Image.network(rLocationDetail.logoURL)),
-                    Text('Item 1'),
-                    Text('Item Detail'),
+                    Expanded(
+                        child: Center(child: Image.network(product.logoUrl))),
+                    Text(
+                      product.productName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                    ),
+                    Text(
+                      product.descriptionField,
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                    ),
                     TextButton(
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.all(Size(50, 20)),
@@ -140,7 +205,7 @@ class _ProducListScreenState extends State<ProducListScreen> {
                     ),
                     Center(
                         child: Text(
-                      'Current month Sold: 2',
+                      'Current month Sold: ${product.soldNumber}',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ))

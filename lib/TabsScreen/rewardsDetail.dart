@@ -125,6 +125,7 @@ class _rewardDetailState extends State<rewardDetail> {
                           navigateTo(double.parse(rLocationDetail.latitude),
                               double.parse(rLocationDetail.longitude));
                         }),
+                        style: ButtonStyle(alignment: Alignment.centerLeft),
                         child: Text(
                           '${rLocationDetail.address}, ${rLocationDetail.city}',
                           softWrap: true,
