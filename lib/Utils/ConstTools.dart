@@ -47,6 +47,7 @@ class ConstTools {
   static const String apiGetRetailerLocationsDetail = "RetailerGetLocationV2";
   static const String apiGetPromotionDetail = "getPromotion.mvc";
   static const String apiGetProducts = "getProductList.mvc";
+  static const String apiGetTransactionData = "getTransactionList.mvc";
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 
@@ -143,5 +144,9 @@ class ConstTools {
     final time = TimeOfDay(hour: int.parse(strDate), minute: 0);
     print(time);
     return time.format(context);
+  }
+
+  static DateTime utcToDateTime(int utc) {
+    return DateTime(1970, 1, 1).add(Duration(seconds: utc));
   }
 }

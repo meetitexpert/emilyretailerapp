@@ -1,6 +1,7 @@
 import 'package:cupertino_table_view/delegate/cupertino_table_view_delegate.dart';
 import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/About.dart';
+import 'package:emilyretailerapp/TabsScreen/MoreSection/Journal.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/Notifications.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/webViewScreen.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
@@ -143,7 +144,14 @@ class _MoreScreenState extends State<MoreScreen> {
   }
 
   handlingAction(int index) {
-    if (moreOptions[index] == ConstTools.notifioction) {
+    if (moreOptions[index] == ConstTools.journal) {
+      //aboutApp
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Journal(),
+          ));
+    } else if (moreOptions[index] == ConstTools.notifioction) {
       //notification
       Navigator.push(
           context,

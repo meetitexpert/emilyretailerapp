@@ -60,6 +60,7 @@ dependencies:
   flip_card: ^0.6.0
   jiffy: ^5.0.0
   expandable: ^5.0.1
+  transparent_image: ^2.0.0
   
 
 dev_dependencies:
