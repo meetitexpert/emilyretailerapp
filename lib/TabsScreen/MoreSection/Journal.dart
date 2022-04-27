@@ -1,18 +1,18 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
-import 'dart:typed_data';
-
 import 'package:cupertino_table_view/delegate/cupertino_table_view_delegate.dart';
 import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
+import 'package:date_format/date_format.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:emilyretailerapp/Model/Jounral/JounralOrder.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
+import 'package:emilyretailerapp/Utils/DatabaseHelper.dart';
 import 'package:emilyretailerapp/Utils/DialogTools.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Journal extends StatefulWidget {
   Journal({Key? key}) : super(key: key);
@@ -22,15 +22,34 @@ class Journal extends StatefulWidget {
 }
 
 class _JournalState extends State<Journal> {
+  DatabaseHelper dbhelper = DatabaseHelper();
   late LoginEntity currentUser;
   bool isJouralDataLoaded = false;
   List<JounralOrder> jounralList = [];
+  String currentMonth = '';
 
   @override
   void initState() {
     super.initState();
     currentUser = ConstTools().retreiveSavedUserDetail();
+    currentMonth = formatDate(DateTime.now(), [MM, " ", yyyy]);
+    getListFromDB();
     getJounralData();
+  }
+
+  void getListFromDB() {
+    final Future<Database> dbFuture = dbhelper.initializeDatabase();
+    dbFuture.then((database) {
+      Future<List<JounralOrder>> jounralListFuture = dbhelper.getJournalList();
+      jounralListFuture.then((list) {
+        setState(() {
+          jounralList = list;
+          if (jounralList.isNotEmpty) {
+            isJouralDataLoaded = true;
+          }
+        });
+      });
+    });
   }
 
   Future getJounralData() async {
@@ -71,8 +90,13 @@ class _JournalState extends State<Journal> {
           if (returnData.isNotEmpty) {
             for (var i = 0; i < returnData.length; i++) {
               JounralOrder order = JounralOrder.fromJson(returnData[i]);
-              jounralList.add(order);
+              var filertedorder =
+                  jounralList.map((e) => e.orderNo == order.orderNo);
+              if (filertedorder.isEmpty) {
+                await dbhelper.insertJournal(order);
+              }
             }
+            getListFromDB();
             isJouralDataLoaded = true;
             setState(() {});
           }
@@ -158,26 +182,10 @@ class _JournalState extends State<Journal> {
                       //product image
                       children: [
                         SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.network(
-                            '${orderDetail.catalogsData[0]["catalogImageUrl"]}',
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            fit: BoxFit.fitHeight,
-                          ),
-                        )
+                            width: 50,
+                            height: 50,
+                            child: Image.network(
+                                orderDetail.catalogsData[0]["catalogImageUrl"]))
                       ],
                     ),
                     Expanded(
@@ -237,7 +245,7 @@ class _JournalState extends State<Journal> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 50.0),
-                      child: Text(orderDetail.orderDispatchStatus),
+                      child: orderStatusSetting(orderDetail),
                     ),
                   ],
                 ),
@@ -250,6 +258,33 @@ class _JournalState extends State<Journal> {
         ],
       ),
     );
+  }
+
+  Widget orderStatusSetting(JounralOrder orderdetail) {
+    String status = '';
+
+    String expresstype = orderdetail.expressData["expressType"];
+    String acceptTime = orderdetail.expressData["acceptTime"];
+    String estimatedDeliveryTime =
+        orderdetail.expressData["estimatedDeliveryTime"];
+    String receiveTime = orderdetail.expressData["receiveTime"];
+    String pincode = orderdetail.expressData["expressNumber"];
+
+    if (receiveTime.isNotEmpty) {
+      status = 'Done';
+    } else if (estimatedDeliveryTime.isNotEmpty || pincode != "") {
+      if (expresstype == "1") {
+        status = 'Pickup';
+      } else if (expresstype == "2") {
+        status = 'Delivery';
+      }
+    } else if (acceptTime.isNotEmpty) {
+      status = 'Accepted';
+    } else {
+      status = 'New';
+    }
+
+    return Text(status);
   }
 
   Widget journalListing() {
@@ -271,7 +306,7 @@ class _JournalState extends State<Journal> {
                   width: 10,
                 ),
                 Text(
-                  "April 2022",
+                  currentMonth,
                   style: TextStyle(
                       color: Colors.blueGrey,
                       fontWeight: FontWeight.bold,
@@ -293,7 +328,9 @@ class _JournalState extends State<Journal> {
           return Expandable(
             collapsed: collapsed,
             expanded: expanded,
-            theme: const ExpandableThemeData(crossFadePoint: 0),
+            theme: const ExpandableThemeData(
+              crossFadePoint: 0,
+            ),
           );
         },
       ),

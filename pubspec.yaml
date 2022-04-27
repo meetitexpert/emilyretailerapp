@@ -61,6 +61,8 @@ dependencies:
   jiffy: ^5.0.0
   expandable: ^5.0.1
   transparent_image: ^2.0.0
+  sqflite: ^2.0.2+1
+  path_provider: ^2.0.9
   
 
 dev_dependencies:
