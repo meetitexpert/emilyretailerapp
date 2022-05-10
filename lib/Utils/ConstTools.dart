@@ -48,6 +48,9 @@ class ConstTools {
   static const String apiGetPromotionDetail = "getPromotion.mvc";
   static const String apiGetProducts = "getProductList.mvc";
   static const String apiGetTransactionData = "getTransactionList.mvc";
+  static const String apiRegisterIPhoneForPush = 'IphonePushRegistration';
+  static const String apiRegisterAndroidForPush = 'AndroidPushRegistration';
+
 ////////////////////////////////////////////////////////////////////////////////
   static late double dpi;
 

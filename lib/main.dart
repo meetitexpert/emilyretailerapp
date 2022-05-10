@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:emilyretailerapp/TabsScreen/TabBarController.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
@@ -7,9 +8,18 @@ import 'package:emilyretailerapp/Intro_vc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  HttpOverrides.global = MyHttpOverrides();
   await AppTools.init();
   DeviceTools.init();
   ConstTools.prefs = await SharedPreferences.getInstance();

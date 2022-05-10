@@ -1,4 +1,4 @@
-package com.example.emilyretailerapp
+package com.envisionmobile.emilyrewards.retailer
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine

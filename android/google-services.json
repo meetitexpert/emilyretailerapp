@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "298444527561",
+    "firebase_url": "https://emily-retailer-7b81a.firebaseio.com",
+    "project_id": "emily-retailer-7b81a",
+    "storage_bucket": "emily-retailer-7b81a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298444527561:android:45fe2bb87693e08d3ffa18",
+        "android_client_info": {
+          "package_name": "com.envisionmobile.emilyrewards.retailer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "298444527561-mv0hntderq71orf9bld9jk6bq8rbg21b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfpEitPQgUmU-IUTRGN-89cp3Zo-p4AXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "298444527561-mv0hntderq71orf9bld9jk6bq8rbg21b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

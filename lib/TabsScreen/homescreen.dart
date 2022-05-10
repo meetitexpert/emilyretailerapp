@@ -68,6 +68,53 @@ class _homeScreenState extends State<homeScreen>
     }
   }
 
+  /*Future getPushToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken(
+        vapidKey: "AIzaSyAQBJCA1rXq-Fm7Ipfl5Gpi7XMnAcv1KeU");
+    if (token != null) {
+      // call push register api
+      debugPrint(token);
+
+      Map<String, dynamic> parameters = {
+        "new_push_device_token": token,
+        "old_push_device_token": token
+      };
+
+      String apiName = ConstTools.apiRegisterIPhoneForPush;
+      if (DeviceTools.devicePlatform == '') {
+        apiName = ConstTools.apiRegisterIPhoneForPush;
+      }
+
+      Response response;
+      HttpService http = HttpService();
+
+      try {
+        response = await http.postRequest(
+            ConstTools.path + apiName, parameters, context);
+        if (response.statusCode == 200) {
+          debugPrint("$response");
+          final int statuscode = response.data["statusCode"];
+          if (statuscode == 0) {
+            debugPrint('$response');
+          } else if (statuscode ==
+              int.parse(ConstTools.multiDevicesErrorCode)) {
+            DialogTools.alertMultiloginDialg(
+                ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+          } else if (statuscode ==
+              int.parse(ConstTools.multiDevicesErrorCodeTwo)) {
+            DialogTools.alertMultiloginDialg(
+                ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
+          }
+        } else {
+          http.checkHttpError(context, HttpErrorType.other, response);
+        }
+      } on Exception catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+  }*/
+
   Future<List<RetailerRewardEntity>> loadHomePromotionsAndRewardData() async {
     Response response;
     HttpService http = HttpService();
@@ -308,7 +355,7 @@ class _homeScreenState extends State<homeScreen>
   }
 
   Widget ratingWidget(int section) {
-    const double height = 115;
+    const double height = 130;
     return Column(
       children: [
         Container(

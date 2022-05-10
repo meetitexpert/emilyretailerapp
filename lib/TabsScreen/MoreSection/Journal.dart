@@ -5,6 +5,7 @@ import 'package:date_format/date_format.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:emilyretailerapp/Model/Jounral/JounralOrder.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
+import 'package:emilyretailerapp/TabsScreen/MoreSection/JournalDetail.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
 import 'package:emilyretailerapp/Utils/ConstTools.dart';
 import 'package:emilyretailerapp/Utils/DatabaseHelper.dart';
@@ -33,6 +34,12 @@ class _JournalState extends State<Journal> {
     super.initState();
     currentUser = ConstTools().retreiveSavedUserDetail();
     currentMonth = formatDate(DateTime.now(), [MM, " ", yyyy]);
+    String lastMonth = ConstTools.prefs!.getString('Month').toString();
+    if (currentMonth != lastMonth) {
+      clearDB();
+      ConstTools.prefs!.setString("Month", currentMonth);
+    }
+
     getListFromDB();
     getJounralData();
   }
@@ -50,6 +57,10 @@ class _JournalState extends State<Journal> {
         });
       });
     });
+  }
+
+  Future clearDB() async {
+    await dbhelper.deleteJournal();
   }
 
   Future getJounralData() async {
@@ -94,12 +105,14 @@ class _JournalState extends State<Journal> {
                   jounralList.map((e) => e.orderNo == order.orderNo);
               if (filertedorder.isEmpty) {
                 await dbhelper.insertJournal(order);
+              } else {
+                await dbhelper.updateJournal(order);
               }
             }
-            getListFromDB();
-            isJouralDataLoaded = true;
-            setState(() {});
           }
+          getListFromDB();
+          isJouralDataLoaded = true;
+          setState(() {});
         } else if (statuscode == int.parse(ConstTools.multiDevicesErrorCode)) {
           DialogTools.alertMultiloginDialg(
               ConstTools.buttonOk, "", ConstTools.multiLoginMessage, context);
@@ -196,6 +209,7 @@ class _JournalState extends State<Journal> {
                           Text(
                             orderDetail.catalogsData[0]['catalogName'],
                             maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           TextButton(
                             style: ButtonStyle(
@@ -216,7 +230,13 @@ class _JournalState extends State<Journal> {
                                 textAlign: TextAlign.left,
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    journalDetail(context, orderDetail),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -225,7 +245,7 @@ class _JournalState extends State<Journal> {
                       //reward earned
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 40.0),
+                          padding: const EdgeInsets.only(right: 30.0),
                           child: rewardTypeAndVlaueSettings(orderDetail),
                         )
                       ],
@@ -244,7 +264,7 @@ class _JournalState extends State<Journal> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 50.0),
+                      padding: const EdgeInsets.only(right: 45.0),
                       child: orderStatusSetting(orderDetail),
                     ),
                   ],
@@ -366,11 +386,13 @@ class _JournalState extends State<Journal> {
           title: const Text('Journal'),
         ),
         body: isJouralDataLoaded
-            ? CupertinoTableView(
-                delegate: generateDelegate(),
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
-              )
+            ? jounralList.isEmpty
+                ? Center(child: Text('No data found'))
+                : CupertinoTableView(
+                    delegate: generateDelegate(),
+                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
+                  )
             : Center(
                 child: Container(
                     margin: const EdgeInsets.only(top: 50, bottom: 30),

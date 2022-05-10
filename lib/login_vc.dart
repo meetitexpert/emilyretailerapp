@@ -172,7 +172,7 @@ class _LoginVcState extends State<LoginVc> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.only(left: 5, right: 5),
             child: Image.asset('images/icon-email.png'),
             width: 35,
             height: 35,
@@ -190,16 +190,17 @@ class _LoginVcState extends State<LoginVc> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 2),
               child: Center(
                 child: TextField(
                   onChanged: (value) {
                     email = value;
                   },
                   decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter your email',
-                      contentPadding: EdgeInsets.only(bottom: 15.0)),
+                    border: InputBorder.none,
+                    hintText: 'Enter your email',
+                    // contentPadding: EdgeInsets.only(bottom: 15.0)
+                  ),
                   keyboardType: TextInputType.emailAddress,
                   autofillHints: const [AutofillHints.email],
                 ),
@@ -239,7 +240,7 @@ class _LoginVcState extends State<LoginVc> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(5.0),
+              padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 2),
               child: Center(
                 child: TextField(
                   onChanged: (value) {
@@ -247,9 +248,10 @@ class _LoginVcState extends State<LoginVc> {
                   },
                   obscureText: true,
                   decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter your password',
-                      contentPadding: EdgeInsets.only(bottom: 15.0)),
+                    border: InputBorder.none,
+                    hintText: 'Enter your password',
+                    // contentPadding: EdgeInsets.only(bottom: 15.0)
+                  ),
                   autofillHints: const [AutofillHints.password],
                   onEditingComplete: () => TextInput.finishAutofillContext(),
                 ),

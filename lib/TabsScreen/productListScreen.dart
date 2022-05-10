@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, no_logic_in_create_state, prefer_const_constructors
 
-import 'package:cupertino_table_view/delegate/cupertino_table_view_delegate.dart';
-import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
 import 'package:date_format/date_format.dart';
 import 'package:emilyretailerapp/EmilyNewtworkService/NetworkSerivce.dart';
 import 'package:emilyretailerapp/Model/LoginEntity.dart';
@@ -40,8 +38,8 @@ class _ProducListScreenState extends State<ProducListScreen> {
   late RetailerLocationsDetail rLocationDetail;
   late int selectedSection = 0;
   List<String> sectionsList = [
-    "",
-    "",
+    // "",
+    // "",
     "Promotion Description",
     "Promotion Terms & Conditions",
     "Rewards Terms & Conditions",
@@ -155,66 +153,76 @@ class _ProducListScreenState extends State<ProducListScreen> {
   }
 
   Widget productListSettings() {
-    return Flexible(
-      child: GridView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-          ),
-          itemCount: productsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            Products product = productsList[index];
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: Center(child: Image.network(product.logoUrl))),
-                    Text(
-                      product.productName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 10) / 2;
+    final double itemWidth = size.width / 2;
+    return GridView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        primary: false,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: (itemWidth / itemHeight),
+        ),
+        itemCount: productsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          Products product = productsList[index];
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      child: Center(
+                          child: Image.network(
+                    product.logoUrl,
+                    width: 200,
+                    height: 200,
+                  ))),
+                  Text(
+                    product.productName,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    product.descriptionField,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                      minimumSize: MaterialStateProperty.all(Size(50, 20)),
+                      padding: MaterialStateProperty.all(EdgeInsets.all(0)),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    Text(
-                      product.descriptionField,
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all(Size(50, 20)),
-                        padding: MaterialStateProperty.all(EdgeInsets.all(0)),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "See more",
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.left,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "See more",
+                        style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
                         ),
+                        textAlign: TextAlign.left,
                       ),
-                      onPressed: () {},
                     ),
-                    Center(
-                        child: Text(
-                      'Current month Sold: ${product.soldNumber}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ))
-                  ],
-                ),
+                    onPressed: () {},
+                  ),
+                  Center(
+                      child: Text(
+                    'Current month Sold: ${product.soldNumber}',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ))
+                ],
               ),
-            );
-          }),
-    );
+            ),
+          );
+        });
   }
 
   Widget promotionDateSetting() {
@@ -281,6 +289,9 @@ class _ProducListScreenState extends State<ProducListScreen> {
             ),
           ),
         ),
+        SizedBox(
+          height: 5,
+        )
       ],
     ));
   }
@@ -336,22 +347,22 @@ class _ProducListScreenState extends State<ProducListScreen> {
   String getPromotionDetailWithSection(int section) {
     String detail = "";
     switch (section) {
-      case 2:
+      case 0:
         detail = promotionDetail.longDescription.isEmpty
             ? "N/A"
             : promotionDetail.longDescription;
         break;
-      case 3:
+      case 1:
         detail = promotionDetail.restrictionTC.isEmpty
             ? "N/A"
             : promotionDetail.restrictionTC;
         break;
-      case 4:
+      case 2:
         detail =
             promotionDetail.redeemTC.isEmpty ? "N/A" : promotionDetail.redeemTC;
         ;
         break;
-      case 5:
+      case 3:
         detail = promotionDetail.rewardsTC.isEmpty
             ? "N/A"
             : promotionDetail.rewardsTC;
@@ -362,31 +373,28 @@ class _ProducListScreenState extends State<ProducListScreen> {
     return detail;
   }
 
-  CupertinoTableViewDelegate generateDelegate() {
-    return CupertinoTableViewDelegate(
-      numberOfSectionsInTableView: () => sectionsList.length,
-      numberOfRowsInSection: (section) {
-        return 1;
-      },
-      cellForRowAtIndexPath: (context, indexPath) {
-        if (indexPath.section == 0) {
-          return productListSettings();
-        } else if (indexPath.section == 1) {
-          return promotionDateSetting();
-        } else {
-          return promotionDetailsSetting(indexPath.section);
-        }
-      },
-      headerInSection: (context, section) => Container(
-        width: double.infinity,
-        height: 5, //section == sectionsList.length - 1 ? 35 : 0,
-        padding: const EdgeInsets.all(0),
+  Widget productListingWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ListView(
+        children: [
+          productListSettings(),
+          SizedBox(
+            height: 5,
+          ),
+          promotionDateSetting(),
+          SizedBox(
+            height: 5,
+          ),
+          ListView.builder(
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              itemCount: sectionsList.length,
+              itemBuilder: (context, index) {
+                return promotionDetailsSetting(index);
+              })
+        ],
       ),
-
-      pressedOpacity: 0.4,
-      canSelectRowAtIndexPath: (indexPath) => false,
-      didSelectRowAtIndexPath: (indexPath) => {},
-      // marginForSection: marginForSection, // set marginForSection when using boxShadow
     );
   }
 
@@ -397,11 +405,7 @@ class _ProducListScreenState extends State<ProducListScreen> {
           title: Text(currentUser.companyName),
         ),
         body: isPromotionDetailLoaded
-            ? CupertinoTableView(
-                delegate: generateDelegate(),
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.only(top: 5, left: 15, right: 15),
-              )
+            ? productListingWidget()
             : Center(
                 child: Container(
                     margin: const EdgeInsets.only(top: 50, bottom: 30),

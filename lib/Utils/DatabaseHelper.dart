@@ -67,7 +67,8 @@ class DatabaseHelper {
   Future<Database> initializeDatabase() async {
     // Get the directory path for both Android and iOS to store database.
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'journal.db';
+    // var path = join(directory.path, 'posts.db');
+    String path = directory.path + '/' + 'journal.db';
 
     // Open/create the database at a given path
     var journalDatabase =
@@ -104,18 +105,18 @@ class DatabaseHelper {
 
   // Update Operation: Update a Journal object and save it to database
   Future<int> updateJournal(JounralOrder Journal) async {
-    var db = await this.database;
+    var db = await database;
     var result = await db.update(JournalTable, Journal.toMap(),
-        where: '$orderNo = ?', whereArgs: [Journal.orderNo]);
+        where: '$serverUUID = ?', whereArgs: [Journal.orderReceiptNo]);
     return result;
   }
 
   // Delete Operation: Delete a Journal object from database
-  /*Future<int> deleteJournal(int id) async {
-		var db = await this.database;
-		int result = await db.rawDelete('DELETE FROM $JournalTable WHERE $colId = $id');
-		return result;
-	}*/
+  Future<int> deleteJournal() async {
+    var db = await database;
+    int result = await db.rawDelete('DELETE FROM $JournalTable');
+    return result;
+  }
 
   // Get number of Journal objects in database
   Future<int> getCount() async {

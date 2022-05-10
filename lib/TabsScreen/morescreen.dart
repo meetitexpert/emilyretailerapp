@@ -3,6 +3,7 @@ import 'package:cupertino_table_view/table_view/cupertino_table_view.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/About.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/Journal.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/Notifications.dart';
+import 'package:emilyretailerapp/TabsScreen/MoreSection/Security/Security.dart';
 import 'package:emilyretailerapp/TabsScreen/MoreSection/webViewScreen.dart';
 import 'package:emilyretailerapp/Utils/AppTools.dart';
 import 'package:emilyretailerapp/Utils/ColorTools.dart';
@@ -164,6 +165,13 @@ class _MoreScreenState extends State<MoreScreen> {
           context,
           MaterialPageRoute(
             builder: (context) => const About(),
+          ));
+    } else if (moreOptions[index] == ConstTools.security) {
+      //security
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Security(),
           ));
     } else if (moreOptions[index] == ConstTools.faqs) {
       //FAQ

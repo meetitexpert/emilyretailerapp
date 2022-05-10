@@ -125,27 +125,29 @@ class _PayoutsScreenState extends State<PayoutsScreen>
           const SizedBox(
             width: 5,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                amount,
-                style: fontStyle(FontWeight.normal, Colors.black),
-              ),
-              Text(
-                payout.receiptId,
-                style: fontStyle(FontWeight.normal, Colors.black),
-              ),
-              Text(
-                '${payout.transactionCount}',
-                style: fontStyle(FontWeight.normal, Colors.black),
-              ),
-              Text(
-                payoutDateTime,
-                style: fontStyle(
-                    FontWeight.normal, const Color(ColorTools.primaryColor)),
-              ),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  amount,
+                  style: fontStyle(FontWeight.normal, Colors.black),
+                ),
+                Text(
+                  payout.receiptId,
+                  style: fontStyle(FontWeight.normal, Colors.black),
+                ),
+                Text(
+                  '${payout.transactionCount}',
+                  style: fontStyle(FontWeight.normal, Colors.black),
+                ),
+                Text(
+                  payoutDateTime,
+                  style: fontStyle(
+                      FontWeight.normal, const Color(ColorTools.primaryColor)),
+                ),
+              ],
+            ),
           ),
         ]),
       ),
